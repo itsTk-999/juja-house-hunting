@@ -33,7 +33,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:3000', // For development
   'http://192.168.56.1:3000', // For testing on your network
-  // 'https://your-vercel-site-name.vercel.app' // For production
+ 'https://juja-house-hunting.vercel.app/', // For production
 ];
 
 const corsOptions = {
