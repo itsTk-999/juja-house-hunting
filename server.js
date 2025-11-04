@@ -1,38 +1,57 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); 
+require('dotenv').config();
+const path = require('path');
+const { Storage } = require('@google-cloud/storage');
+
+// --- GOOGLE CLOUD STORAGE CONFIGURATION ---
+let storage;
+try {
+  const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  const absolutePath = path.resolve(credentialsPath);
+
+  storage = new Storage({
+    keyFilename: absolutePath,
+  });
+
+  const bucketName = process.env.GCS_BUCKET_NAME;
+  const bucket = storage.bucket(bucketName);
+  console.log(`[GCS Config] Successfully connected to bucket: ${bucketName}`);
+} catch (err) {
+  console.error('❌ Failed to load Google Cloud credentials:', err.message);
+}
+
 // --- 1. Import http and Socket.IO ---
 const http = require('http');
-const { Server } = require("socket.io");
-// --- End Import ---
+const { Server } = require('socket.io');
 
 // --- 2. Import Chat Models ---
 const User = require('./models/User');
 const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
-// --- End Import ---
 
-// Import routes
+// --- Import routes ---
 const authRoutes = require('./api/auth');
 const apartmentRoutes = require('./api/apartments');
 const contactRoutes = require('./api/contact');
-const statsRoutes = require('./api/stats'); 
+const statsRoutes = require('./api/stats');
 const preferencesRoutes = require('./api/preferences');
 const searchesRoutes = require('./api/searches');
 const profileRoutes = require('./api/profile');
 const roommateRoutes = require('./api/roommate');
-const messageRoutes = require('./api/messages'); 
-const partnerRoutes = require('./api/partners'); 
+const messageRoutes = require('./api/messages');
+const partnerRoutes = require('./api/partners');
 
 const app = express();
-// --- 4. Create HTTP server and wrap Express app ---
+
+// --- Create HTTP server ---
 const server = http.createServer(app);
-// --- 1. NEW: CORS Configuration ---
-// We will add our Vercel URL here later
+
+// --- CORS Configuration ---
 const allowedOrigins = [
-  'http://localhost:3000', // For development
-  // 'https://your-vercel-site-name.vercel.app' // For production
+  'http://localhost:3000',
+  // 'https://your-vercel-site-name.vercel.app' // add this in production
 ];
 
 const corsOptions = {
@@ -42,31 +61,30 @@ const corsOptions = {
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }
+  },
 };
 app.use(cors(corsOptions));
-// --- END NEW ---
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins, // Use the same list
-    methods: ["GET", "POST"]
-  }
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+  },
 });
 
 const PORT = process.env.PORT || 5001;
 
-// --- Database Connection (unchanged) ---
-mongoose.connect(process.env.MONGODB_URI)
+// --- Database Connection ---
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch((err) => console.error('MongoDB connection error:', err));
 
-// --- Middleware (unchanged) ---
+// --- Middleware ---
 app.use(cors());
-// We removed global express.json(). It must be added to individual routes.
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
-// --- API Routes (unchanged) ---
+// --- API Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/apartments', apartmentRoutes);
 app.use('/api/contact', contactRoutes);
@@ -76,79 +94,64 @@ app.use('/api/searches', searchesRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/roommate', roommateRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/partners', partnerRoutes); // --- THIS LINE IS NEW ---
+app.use('/api/partners', partnerRoutes);
 
+app.get('*', (req, res) => {
+  res.send('Juja Hunt API is running!');
+});
 
-  app.get('*', (req, res) => {
-    res.send('Juja Hunt API is running!');
-  });
-
-// --- 7. Socket.IO Real-time Logic ---
-
-// This maps a logged-in User's ID (e.g., "60f...") to their unique socket ID (e.g., "a3x...")
+// --- SOCKET.IO REAL-TIME LOGIC ---
 let onlineUsers = new Map();
 
 io.on('connection', (socket) => {
   console.log(`[Socket.IO] New connection: ${socket.id}`);
 
-  // 1. User joins the server
   socket.on('addUser', (userId) => {
     onlineUsers.set(userId, socket.id);
     console.log(`[Socket.IO] User ${userId} connected with socket ${socket.id}`);
-    // Send all currently online user IDs to all clients
     io.emit('getUsers', Array.from(onlineUsers.keys()));
   });
 
-  // 2. User sends a message
   socket.on('sendMessage', async ({ senderId, receiverId, message, conversationId }) => {
     console.log(`[Socket.IO] Message from ${senderId} to ${receiverId}: ${message}`);
     try {
-        // A. Save the message to the database
-        const newMessage = new Message({
-            sender: senderId,
-            receiver: receiverId,
-            message: message,
-            conversation: conversationId,
-            isRead: false 
+      const newMessage = new Message({
+        sender: senderId,
+        receiver: receiverId,
+        message: message,
+        conversation: conversationId,
+        isRead: false,
+      });
+      const savedMessage = await newMessage.save();
+
+      await Conversation.findByIdAndUpdate(conversationId, {
+        $push: { messages: savedMessage._id },
+        $set: { updatedAt: new Date() },
+        $pull: {
+          permanentlyDeletedFor: { $in: [senderId, receiverId] },
+          hiddenFor: { $in: [senderId, receiverId] },
+        },
+      });
+
+      const populatedMessage = await savedMessage.populate('sender', 'name profilePicture');
+
+      const receiverSocketId = onlineUsers.get(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit('getMessage', populatedMessage);
+        io.to(receiverSocketId).emit('getNotification', {
+          senderName: populatedMessage.sender.name,
+          message: populatedMessage.message,
         });
-        const savedMessage = await newMessage.save();
+      }
 
-        await Conversation.findByIdAndUpdate(conversationId, {
-            $push: { messages: savedMessage._id },
-            $set: { updatedAt: new Date() },
-            $pull: { 
-              permanentlyDeletedFor: { $in: [senderId, receiverId] },
-              hiddenFor: { $in: [senderId, receiverId] } // Also restore from archive
-            }
-        });
-        
-        // C. Populate sender info for the chat bubble
-        const populatedMessage = await savedMessage.populate('sender', 'name profilePicture');
-
-        // D. Send the message to the receiver (if they are online)
-        const receiverSocketId = onlineUsers.get(receiverId);
-        if (receiverSocketId) {
-            // Send the full message object
-            io.to(receiverSocketId).emit('getMessage', populatedMessage);
-            // Send a simple notification event
-            io.to(receiverSocketId).emit('getNotification', {
-                senderName: populatedMessage.sender.name,
-                message: populatedMessage.message,
-            });
-        }
-
-        // E. Send the message back to the sender (so they see it)
-        io.to(socket.id).emit('getMessage', populatedMessage);
-
+      io.to(socket.id).emit('getMessage', populatedMessage);
     } catch (err) {
-        console.error("[Socket.IO] Error saving or sending message:", err.message);
+      console.error('[Socket.IO] Error saving or sending message:', err.message);
     }
   });
 
-  // 3. User disconnects
   socket.on('disconnect', () => {
     console.log(`[Socket.IO] User disconnected: ${socket.id}`);
-    // Find which userId was associated with this socket.id
     for (let [userId, sockId] of onlineUsers.entries()) {
       if (sockId === socket.id) {
         onlineUsers.delete(userId);
@@ -156,14 +159,11 @@ io.on('connection', (socket) => {
         break;
       }
     }
-    // Update the online list for all remaining clients
     io.emit('getUsers', Array.from(onlineUsers.keys()));
   });
 });
-// --- End Socket.IO Logic ---
 
-
-// --- 8. Start the HTTP server (not the app) ---
+// --- START SERVER ---
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
