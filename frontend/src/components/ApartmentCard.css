@@ -1,0 +1,149 @@
+/* --- Apartment Card Container --- */
+.apartment-card {
+  position: relative; /* Needed for absolute positioning of buttons */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  width: 100%;
+  max-width: 350px; /* Optional max width for larger screens */
+  margin: 0 auto 1rem auto; /* Centered with spacing below */
+}
+
+/* Hover Effects */
+.apartment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Buttons: Like and Compare --- */
+.like-button,
+.compare-icon-button,
+.admin-delete-button {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: none;
+  z-index: 10;
+  aspect-ratio: 1 / 1; /* keeps square shape */
+  min-width: 35px;
+  width: 10%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Like Button */
+.like-button {
+  top: 2%;
+  right: 2%;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.like-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Compare Button */
+.compare-icon-button {
+  top: 2%;
+  left: 2%;
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #333;
+}
+
+.compare-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.compare-icon-button.btn-success {
+  background-color: #198754 !important;
+  color: white !important;
+}
+
+.compare-icon-button.btn-success:hover {
+  background-color: #157347 !important;
+}
+
+/* Admin Delete Button */
+.admin-delete-button {
+  top: 2%;
+  right: 14%; /* sits left of Like button */
+  background-color: var(--bs-danger);
+  border-color: var(--bs-danger);
+  color: white;
+}
+
+/* --- Card Text & Elements --- */
+.apartment-card .card-body {
+  padding: 1rem;
+}
+
+.apartment-card .card-title {
+  font-size: clamp(0.9rem, 2vw, 1.25rem);
+  margin-bottom: 0.5rem;
+}
+
+.apartment-card .card-subtitle {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+.apartment-card .card-text {
+  font-size: clamp(0.75rem, 1.8vw, 1rem);
+  margin-bottom: 0.5rem;
+}
+
+.apartment-card .badge {
+  font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  padding: 0.3em 0.5em;
+}
+
+.apartment-card .h5 {
+  font-size: clamp(0.9rem, 2vw, 1.2rem); /* Price */
+}
+
+.apartment-card .btn-primary {
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  padding: 0.25rem 0.5rem;
+}
+
+/* --- Responsive Images --- */
+.apartment-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* --- Mobile Adjustments --- */
+@media (max-width: 576px) {
+  .apartment-card .card-body {
+    padding: 0.75rem;
+  }
+
+  .like-button,
+  .compare-icon-button,
+  .admin-delete-button {
+    min-width: 35px;
+    top: 8px;
+  }
+
+  .like-button {
+    right: 8px;
+  }
+
+  .compare-icon-button {
+    left: 8px;
+  }
+
+  .admin-delete-button {
+    right: 50px;
+  }
+
+  .like-button svg,
+  .compare-icon-button svg,
+  .admin-delete-button svg {
+    font-size: 18px; /* Larger icons on mobile */
+  }
+
+  .apartment-card .card-title {
+    margin-bottom: 0.25rem;
+  }
+}

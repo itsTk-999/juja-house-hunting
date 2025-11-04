@@ -1,0 +1,216 @@
+/* --- Resources Page Header --- */
+.resources-header {
+  position: relative;
+  padding: 4rem 1rem;
+  margin-bottom: 3rem;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  /* Soft, welcoming gradient */
+  background: linear-gradient(
+    135deg,
+    #a8e063 0%,
+    #56ab2f 100%
+  ); /* Light green */
+}
+[data-bs-theme="dark"] .resources-header {
+  background: linear-gradient(135deg, #2a5a0a 0%, #56ab2f 100%);
+}
+
+.resources-header-content {
+  position: relative;
+  z-index: 2;
+}
+.resources-header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+.resources-header p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Section Heading --- */
+.section-heading {
+  font-weight: 600;
+  color: var(--bs-heading-color);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+[data-bs-theme="dark"] .section-heading {
+  color: #a8e063; /* Use the light green as accent in dark mode */
+}
+
+/* --- Partner Card Styling --- */
+.partner-card {
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  background-color: var(--bs-card-bg);
+}
+.partner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+.partner-card .partner-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--bs-primary);
+}
+.partner-card .card-title {
+  font-weight: 600;
+}
+.partner-card .card-text {
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+}
+
+/* --- Guide Accordion Styling --- */
+.guide-accordion .accordion-item {
+  background-color: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px !important;
+  margin-bottom: 0.5rem;
+}
+.guide-accordion .accordion-button {
+  font-weight: 500;
+  color: var(--bs-body-color);
+  background-color: var(--bs-secondary-bg);
+}
+.guide-accordion .accordion-button:not(.collapsed) {
+  background-color: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary);
+  box-shadow: none;
+}
+.guide-accordion .accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.guide-accordion .accordion-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* --- Testimonial Card Styling --- */
+.testimonial-card {
+  background-color: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+.testimonial-card .testimonial-quote {
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 2rem;
+}
+.testimonial-card .testimonial-quote::before {
+  content: "“";
+  position: absolute;
+  left: 0;
+  top: -0.5rem;
+  font-size: 3rem;
+  color: var(--bs-success);
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+.testimonial-user {
+  display: flex;
+  align-items: center;
+}
+.testimonial-user .avatar-placeholder {
+  color: var(--bs-secondary-color);
+  margin-right: 10px;
+}
+.testimonial-user-name {
+  font-weight: 600;
+}
+
+/* --- NEW: Partner Detail Page Styles --- */
+.resource-header-simple {
+  background-color: var(--bs-tertiary-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.partner-logo-large {
+  max-height: 120px; /* --- THIS IS THE FIX --- */
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  background-color: #ffffff; /* Keep a white bg if logo is transparent */
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--bs-border-color);
+}
+
+.section-heading-detail {
+  font-weight: 600;
+  color: var(--bs-heading-color);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.partner-detail-card .list-group-item {
+  background-color: var(--bs-card-bg); /* Ensure it matches card */
+}
+
+/* --- Responsive Styles for Smaller Screens --- */
+@media (max-width: 768px) {
+  .resources-header {
+    padding: 2.5rem 1rem;
+  }
+  .resources-header h1 {
+    font-size: 1.8rem;
+  }
+  .resources-header p {
+    font-size: 0.95rem;
+  }
+
+  .partner-card {
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+  .partner-card .partner-icon {
+    font-size: 1.8rem;
+  }
+  .partner-card .card-text {
+    font-size: 0.85rem;
+  }
+
+  .testimonial-card {
+    padding: 1rem;
+  }
+  .testimonial-card .testimonial-quote {
+    font-size: 0.95rem;
+    padding-left: 1.5rem;
+  }
+  .partner-logo-large {
+    max-width: 140px;
+    max-height: 80px;
+    padding: 0.5rem;
+  }
+}
+
+/* Extra-small devices (phones under 480px wide) */
+@media (max-width: 480px) {
+  .resources-header h1 {
+    font-size: 1.5rem;
+  }
+  .resources-header p {
+    font-size: 0.85rem;
+  }
+  .section-heading {
+    font-size: 1.1rem;
+  }
+  .partner-card,
+  .testimonial-card {
+    padding: 0.8rem;
+  }
+}

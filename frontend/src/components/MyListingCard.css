@@ -1,0 +1,154 @@
+/* --- Card Container --- */
+.listing-card-admin {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-card-admin:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Card Image --- */
+.card-img-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  height: 200px;
+}
+
+.card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Status Badge --- */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4em 0.7em;
+  text-transform: uppercase;
+}
+
+/* --- Card Body --- */
+.listing-card-admin .card-body {
+  flex-grow: 1;
+}
+
+.listing-card-admin .card-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.listing-card-admin .card-text {
+  font-size: 0.95rem;
+  color: var(--bs-secondary-color);
+  line-height: 1.4;
+}
+
+/* --- Card Footer --- */
+.card-admin-footer {
+  background-color: var(--bs-tertiary-bg);
+  border-top: 1px solid var(--bs-border-color);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Footer Buttons */
+.card-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-admin-actions .btn {
+  flex: 1 1 auto;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+/* --- Switch Styling --- */
+.card-admin-footer .form-check {
+  margin: 0;
+}
+
+.card-admin-footer .form-check-input {
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.card-admin-footer .form-check-label {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .card-img-wrapper {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-img-wrapper {
+    height: 160px;
+  }
+  .card-admin-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .card-admin-actions {
+    flex-direction: column;
+  }
+  .card-admin-actions .btn {
+    width: 100%;
+  }
+  .card-admin-footer .form-check-label {
+    text-align: left;
+  }
+}
+
+@media (max-width: 500px) {
+  .card-img-wrapper {
+    height: 140px;
+  }
+  .listing-card-admin .card-title {
+    font-size: 1rem;
+  }
+  .listing-card-admin .card-text {
+    font-size: 0.85rem;
+  }
+  .card-admin-actions .btn {
+    font-size: 0.85rem;
+  }
+  .card-admin-footer .form-check-label {
+    font-size: 0.85rem;
+  }
+}

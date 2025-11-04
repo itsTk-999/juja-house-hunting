@@ -1,0 +1,180 @@
+/* --- Custom Navbar Styling --- */
+.navbar-custom {
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* --- Logo Styling --- */
+.navbar-custom .navbar-brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+.navbar-logo {
+  height: 35px;
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+/* --- LIGHT THEME --- */
+.navbar-custom.navbar-light {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.navbar-custom.navbar-light .navbar-brand {
+  color: #212529 !important;
+}
+.navbar-custom.navbar-light .nav-link {
+  font-weight: 500;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  margin: 0 0.25rem;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.navbar-custom.navbar-light .nav-link:hover {
+  color: #000;
+}
+.navbar-custom.navbar-light .nav-link.active {
+  color: #198754;
+  font-weight: 600;
+  border-bottom: 3px solid #198754;
+}
+
+/* --- DARK THEME --- */
+.navbar-custom.navbar-dark {
+  background-color: #212529 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.navbar-custom.navbar-dark .navbar-brand {
+  color: #f8f9fa !important;
+}
+.navbar-custom.navbar-dark .nav-link {
+  font-weight: 500;
+  color: #adb5bd;
+  border-bottom: 3px solid transparent;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  margin: 0 0.25rem;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.navbar-custom.navbar-dark .nav-link:hover {
+  color: #fff;
+}
+.navbar-custom.navbar-dark .nav-link.active {
+  color: #198754;
+  font-weight: 600;
+  border-bottom: 3px solid #198754;
+}
+
+/* --- Theme Switch Styles --- */
+.theme-switch {
+  display: flex;
+  align-items: center;
+}
+.theme-switch .form-check-input {
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.theme-switch .form-check-label {
+  cursor: pointer;
+  transform: translateY(0);
+  font-size: 0.9rem;
+  margin-left: 0.25rem;
+}
+.theme-switch .form-check-label svg {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+/* --- Dropdown Avatar Styles --- */
+.navbar-avatar {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* --- Dropdown Styling --- */
+.dropdown-menu {
+  background-color: var(--bs-dropdown-bg) !important;
+  border: 1px solid var(--bs-border-color-translucent) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  color: var(--bs-body-color);
+}
+
+.dropdown-item {
+  color: var(--bs-body-color);
+  padding: 0.75rem 1.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-item:hover {
+  background-color: var(--bs-light-bg-subtle);
+  color: var(--bs-primary);
+}
+.dropdown-item.text-danger:hover {
+  background-color: var(--bs-danger);
+  color: #fff !important;
+}
+
+/* --- Responsive styles for mobile navbar --- */
+@media (max-width: 991px) {
+  /* Stack nav links vertically */
+  .navbar-custom .nav-link {
+    padding: 0.5rem 0.75rem;
+    margin: 0.15rem 0;
+    font-size: 0.9rem;
+    border-bottom: none;
+  }
+
+  .navbar-custom .nav-link.dropdown-toggle {
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Active link styling for mobile */
+  .navbar-custom.navbar-light .nav-link.active {
+    border-bottom: none;
+    background-color: #f1f8ff;
+    border-radius: 5px;
+  }
+  .navbar-custom.navbar-dark .nav-link.active {
+    border-bottom: none;
+    background-color: #343a40;
+    border-radius: 5px;
+  }
+
+  /* Theme switch adjustments */
+  .theme-switch {
+    margin-left: 0.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .theme-switch .form-check-input {
+    font-size: 1rem;
+  }
+  .theme-switch .form-check-label {
+    font-size: 0.85rem;
+  }
+  .theme-switch .form-check-label svg {
+    font-size: 0.9rem;
+  }
+
+  /* Logo smaller */
+  .navbar-logo {
+    height: 28px;
+    margin-right: 0.25rem;
+  }
+
+  /* Optional: hide site title */
+  .navbar-custom .site-title {
+    display: none !important;
+  }
+}

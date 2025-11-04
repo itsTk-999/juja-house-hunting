@@ -1,0 +1,130 @@
+/* --- Roommate Finder Page Header --- */
+.apartments-header {
+  position: relative;
+  padding: 4rem 1rem;
+  margin-bottom: 3rem;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    #0d6efd 0%,
+    #6f42c1 100%
+  ); /* Blue → Purple */
+}
+
+.apartments-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.apartments-header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.apartments-header p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Filter Card Styling --- */
+.filter-card-custom {
+  border: none;
+  border-radius: 12px;
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  position: sticky;
+  top: 80px;
+  z-index: 5;
+}
+
+.filter-card-custom h4 {
+  color: var(--bs-heading-color);
+  border-bottom: 1px solid var(--bs-border-color);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.filter-subheading {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Results Area --- */
+.results-heading {
+  color: var(--bs-heading-color);
+  border-bottom: 1px solid var(--bs-border-color);
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+/* --- Result Cards --- */
+.roommate-card {
+  border: none;
+  border-radius: 12px;
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.roommate-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Optional: Add smooth color transitions */
+.roommate-card,
+.filter-card-custom {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 991px) {
+  .apartments-header {
+    padding: 3.5rem 1rem;
+  }
+  .apartments-header h1 {
+    font-size: 2.2rem;
+  }
+  .apartments-header p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .filter-card-custom {
+    position: static;
+    margin-bottom: 2rem;
+  }
+  .results-heading {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .apartments-header {
+    padding: 3rem 1rem;
+    margin-bottom: 2rem;
+  }
+  .apartments-header h1 {
+    font-size: 1.9rem;
+  }
+  .apartments-header p {
+    font-size: 0.95rem;
+  }
+}

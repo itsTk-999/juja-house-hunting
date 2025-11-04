@@ -1,0 +1,252 @@
+/* --- Hero Styles --- */
+.home-hero {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.home-hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 1;
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 3;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  animation: fadeInContent 1s ease-out forwards;
+  padding: 0 1rem;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-hero-content .display-4 {
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-hero-content .btn-success {
+  background-color: #198754;
+  border-color: #198754;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(25, 135, 84, 0.4);
+}
+
+.home-hero-content .btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(25, 135, 84, 0.6);
+}
+
+/* --- Ad Carousel Styles --- */
+.ad-carousel .carousel-item img {
+  height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.ad-caption {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* --- Stats & Map Styles --- */
+.stats-section {
+  background-color: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 12px;
+  padding: 3rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  margin-top: -50px;
+  position: relative;
+  z-index: 10;
+  border-top: 5px solid #198754;
+}
+
+.stat-item {
+  transition: all 0.3s ease-out;
+}
+
+.stat-item:hover {
+  transform: translateY(-8px);
+}
+
+.stat-number {
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: #198754;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #005f73;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .stat-item:not(:last-child) {
+    border-right: 1px solid var(--bs-border-color);
+  }
+}
+
+.map-row {
+  border-top: 1px solid var(--bs-border-color);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+/* --- Featured Listings Styles --- */
+.featured-listings-section {
+  background-color: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 12px;
+  padding: 3rem;
+  margin-top: 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+.featured-listings-section h2 {
+  font-weight: 700;
+  color: var(--bs-heading-color);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* --- Tablet Responsiveness --- */
+@media (max-width: 992px) {
+  .home-hero {
+    height: 70vh;
+  }
+
+  .home-hero-content .display-4 {
+    font-size: 2.5rem;
+  }
+
+  .stats-section,
+  .featured-listings-section {
+    padding: 2rem;
+  }
+
+  .stat-number {
+    font-size: 2.3rem;
+  }
+
+  .ad-carousel .carousel-item img {
+    height: 300px;
+  }
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 576px) {
+  .home-hero {
+    height: 60vh;
+  }
+
+  .home-hero-content .display-4 {
+    font-size: 1.8rem;
+  }
+
+  .home-hero-content .lead {
+    font-size: 0.95rem;
+  }
+
+  .home-hero-content .btn-success {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .ad-carousel .carousel-item img {
+    height: 220px;
+  }
+
+  .ad-caption {
+    padding: 0.5rem;
+  }
+
+  .ad-caption h3 {
+    font-size: 1rem;
+  }
+
+  .ad-caption p {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
+
+  .featured-listings-section,
+  .stats-section {
+    padding: 1.5rem;
+    margin-top: -20px;
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .stat-item {
+    margin-bottom: 1.2rem;
+  }
+
+  .stat-item:hover {
+    transform: none;
+  }
+
+  .stat-item:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--bs-border-color);
+    padding-bottom: 1.2rem;
+  }
+
+  .stat-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .featured-listings-section h2 {
+    font-size: 1.3rem;
+  }
+}

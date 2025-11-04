@@ -1,0 +1,30 @@
+/* --- Global App Styles --- */
+.App {
+  min-height: 100vh; /* Ensure app fills viewport height */
+  background-color: var(--bs-body-bg); /* Theme-aware background */
+  color: var(--bs-body-color); /* Theme-aware text color */
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* --- Images --- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Links --- */
+a {
+  color: inherit; /* Respect parent color */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: line-style color style thickness;
+}
+
+/* --- Buttons --- */
+button {
+  cursor: auto;
+}

@@ -1,0 +1,138 @@
+/* --- Contact Page Container --- */
+.contact-page-container {
+  position: relative;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-radius: 12px;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  color: #fff;
+  background: url("/public/images/contact-bg.jpg") center center / cover
+    no-repeat;
+}
+
+/* --- Overlay for Contrast --- */
+.contact-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+/* --- Content Layer --- */
+.contact-content-wrapper {
+  position: relative;
+  z-index: 2;
+  padding: 0 1rem;
+}
+
+/* --- Contact Card --- */
+.contact-card {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.293);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #79f273ce;
+  padding: 2rem;
+}
+
+.contact-card .form-control {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ced4da;
+  color: #000d21;
+}
+
+/* --- Success Message Animation --- */
+.success-message-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Social Icons Section --- */
+.social-icons-section {
+  text-align: center;
+  margin-top: 3rem;
+  color: #f8f9fa;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.social-icons-section h4 {
+  color: inherit;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+.social-icon-link {
+  color: #f8f9fa;
+  font-size: 2rem;
+  margin: 0 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icon-link:hover {
+  color: #198754;
+  transform: scale(1.1);
+}
+
+/* --- Tablet Responsiveness --- */
+@media (max-width: 992px) {
+  .contact-page-container {
+    padding: 3rem 1.5rem;
+  }
+
+  .contact-card {
+    padding: 1.5rem;
+  }
+
+  .social-icon-link {
+    font-size: 1.8rem;
+    margin: 0 0.75rem;
+  }
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 576px) {
+  .contact-page-container {
+    padding: 2rem 1rem;
+    margin-top: 0;
+  }
+
+  .contact-card {
+    padding: 1rem;
+  }
+
+  .social-icons-section {
+    margin-top: 2rem;
+  }
+
+  .social-icons-section h4 {
+    font-size: 1.1rem;
+  }
+
+  .social-icon-link {
+    font-size: 1.4rem;
+    margin: 0 0.5rem;
+  }
+
+  .contact-card .form-control {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+}

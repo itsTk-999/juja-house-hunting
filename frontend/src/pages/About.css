@@ -1,0 +1,134 @@
+/* --- About Page Header --- */
+.about-header {
+  position: relative;
+  padding: 5rem 1rem;
+  margin-bottom: 3rem;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(135deg, #198754 0%, #17a2b8 100%);
+}
+
+.about-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.about-header p {
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* --- Content Sections --- */
+.about-section {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background-color: var(--bs-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.about-section h3 {
+  color: #198754;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+.about-section p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--bs-body-color);
+}
+
+/* --- Values Section --- */
+.value-item {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.value-icon {
+  font-size: 3rem;
+  color: #198754;
+  margin-bottom: 1rem;
+}
+
+.value-item h5 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.value-item p {
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+  line-height: 1.6;
+}
+
+/* --- Tablet Responsiveness --- */
+@media (max-width: 992px) {
+  .about-header {
+    padding: 4rem 1rem;
+  }
+
+  .about-section {
+    padding: 1.8rem;
+  }
+
+  .value-item {
+    padding: 1rem;
+  }
+
+  .value-icon {
+    font-size: 2.5rem;
+  }
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 576px) {
+  .about-header {
+    padding: 3rem 1rem;
+  }
+
+  .about-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .about-header p {
+    font-size: 0.95rem;
+  }
+
+  .about-section {
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-section h3 {
+    font-size: 1.3rem;
+  }
+
+  .about-section p {
+    font-size: 0.9rem;
+  }
+
+  .value-item {
+    padding: 0.8rem;
+  }
+
+  .value-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .value-item h5 {
+    font-size: 1rem;
+  }
+
+  .value-item p {
+    font-size: 0.85rem;
+  }
+}

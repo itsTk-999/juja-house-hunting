@@ -1,0 +1,184 @@
+/* --- Conversation Item Container --- */
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative; /* For the unread dot */
+  background: rgba(
+    var(--bs-body-bg-rgb, 255, 255, 255),
+    0.05
+  ); /* subtle glass effect */
+  backdrop-filter: blur(6px);
+  color: var(--bs-body-color);
+}
+
+/* Hover adds a gentle color lift */
+.conversation-item:hover {
+  background: var(--bs-tertiary-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Avatar --- */
+.conversation-avatar {
+  width: clamp(35px, 8vw, 45px);
+  height: clamp(35px, 8vw, 45px);
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 2px solid #25d366; /* green border highlight */
+}
+
+.conversation-avatar-placeholder {
+  color: var(--bs-secondary-color);
+  margin-right: 10px;
+}
+
+/* --- Details --- */
+.conversation-details {
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.conversation-name {
+  font-weight: 600;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: var(--bs-body-color);
+}
+
+.conversation-preview {
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  color: var(--bs-secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Unread Styles --- */
+.conversation-item.unread {
+  background: rgba(37, 211, 102, 0.15); /* subtle green tint */
+  box-shadow: 0 2px 10px rgba(37, 211, 102, 0.25);
+}
+
+.conversation-item.unread .conversation-name {
+  font-weight: 700;
+  color: #25d366;
+}
+
+.conversation-item.unread .conversation-preview {
+  font-weight: 600;
+  color: #a5d6a7;
+}
+
+.unread-dot {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: clamp(0.6rem, 2vw, 0.7rem);
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* --- Pinned Styles --- */
+.conversation-item.pinned {
+  background: rgba(255, 193, 7, 0.15); /* yellow tint */
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.25);
+}
+
+.pin-icon {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: clamp(0.6rem, 2vw, 0.7rem);
+  color: #f1c40f;
+}
+
+/* --- Dropdown Options --- */
+.conversation-options {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: bold;
+  color: var(--bs-secondary-color);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.conversation-options:hover {
+  color: #25d366;
+  background-color: rgba(37, 211, 102, 0.1);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  background-color: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color);
+}
+
+.dropdown-item {
+  color: var(--bs-body-color);
+}
+
+.dropdown-item:hover {
+  background-color: var(--bs-tertiary-bg);
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* --- Chat List Background --- */
+.chat-menu-conversations {
+  background: var(--bs-card-bg); /* Fix: theme aware */
+  padding: 0.5rem;
+  color: var(--bs-body-color);
+}
+
+/* --- Mobile Adjustments --- */
+@media (max-width: 576px) {
+  .conversation-item {
+    padding: 0.5rem;
+  }
+
+  .conversation-avatar {
+    width: 35px;
+    height: 35px;
+    margin-right: 8px;
+  }
+
+  .conversation-name {
+    font-size: 0.85rem;
+  }
+
+  .conversation-preview {
+    font-size: 0.75rem;
+  }
+
+  .unread-dot {
+    font-size: 0.6rem;
+    min-width: 16px;
+    height: 16px;
+  }
+
+  .pin-icon {
+    font-size: 0.6rem;
+  }
+
+  .conversation-options {
+    font-size: 1rem;
+    padding: 0.2rem 0.4rem;
+  }
+}

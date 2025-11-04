@@ -1,0 +1,268 @@
+/* --- Header --- */
+.my-listings-header {
+  position: relative;
+  padding: 4rem 1rem;
+  margin-bottom: 3rem;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.my-listings-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.my-listings-header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.my-listings-header p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Create New Listing Button --- */
+.create-new-listing-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #198754;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.create-new-listing-btn:hover {
+  background-color: #146c43;
+  text-decoration: none;
+  color: #fff;
+}
+
+/* --- Apartment Cards Grid --- */
+.my-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Listing Card --- */
+.listing-card-admin {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.listing-card-admin:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Card Image --- */
+.card-img-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  height: 200px;
+}
+
+.card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Status Badge --- */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4em 0.7em;
+  text-transform: uppercase;
+}
+
+/* --- Card Body --- */
+.card-body {
+  flex-grow: 1;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: var(--bs-secondary-color);
+  line-height: 1.4;
+}
+
+/* --- Card Footer --- */
+.card-admin-footer {
+  background-color: var(--bs-tertiary-bg);
+  border-top: 1px solid var(--bs-border-color);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.card-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-admin-actions .btn {
+  flex: 1 1 auto; /* grow & shrink */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  min-width: auto; /* REMOVE fixed min-width to prevent large buttons */
+}
+
+/* --- Switch Styling --- */
+.card-admin-footer .form-check {
+  margin: 0;
+}
+
+.card-admin-footer .form-check-input {
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.card-admin-footer .form-check-label {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* --- Responsive Adjustments --- */
+
+/* Medium screens (<992px) */
+@media (max-width: 992px) {
+  .my-listings-header {
+    padding: 3.5rem 1rem;
+  }
+  .my-listings-header h1 {
+    font-size: 2.2rem;
+  }
+  .my-listings-header p {
+    font-size: 1rem;
+    max-width: 500px;
+  }
+  .card-img-wrapper {
+    height: 180px;
+  }
+}
+
+/* Small screens (<768px) */
+@media (max-width: 768px) {
+  .my-listings-header {
+    padding: 2.5rem 1rem;
+    margin-bottom: 2rem;
+  }
+  .my-listings-header h1 {
+    font-size: 1.8rem;
+  }
+  .my-listings-header p {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+  .card-img-wrapper {
+    height: 160px;
+  }
+
+  /* Stack footer items vertically */
+  .card-admin-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .card-admin-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Buttons now shrink properly on small screens */
+  .card-admin-actions .btn {
+    width: 100%;
+    flex: 1 1 auto; /* allow shrinking */
+    font-size: 0.9rem;
+    min-width: 0; /* critical fix for mobile */
+  }
+
+  .card-admin-footer .form-check {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .create-new-listing-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+  }
+}
+
+/* Extra small screens (<500px) */
+@media (max-width: 500px) {
+  .my-listings-header {
+    padding: 2rem 0.5rem;
+    border-radius: 0;
+  }
+  .my-listings-header h1 {
+    font-size: 1.6rem;
+  }
+  .my-listings-header p {
+    font-size: 0.85rem;
+  }
+  .card-img-wrapper {
+    height: 140px;
+  }
+  .card-title {
+    font-size: 1rem;
+  }
+  .card-text {
+    font-size: 0.85rem;
+  }
+  .card-admin-actions .btn {
+    font-size: 0.85rem;
+  }
+  .card-admin-footer .form-check-label {
+    font-size: 0.85rem;
+  }
+  .create-new-listing-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

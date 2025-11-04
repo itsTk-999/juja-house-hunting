@@ -1,0 +1,81 @@
+/* --- Styling for My Roommate Profile Form --- */
+
+.roommate-profile-form h5 {
+  font-weight: 600;
+  color: var(--bs-primary); /* Theme blue */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+.roommate-profile-form .form-label {
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+/* --- Responsive Styles for Roommate Profile Form --- */
+
+/* Medium screens (tablets and small laptops) */
+@media (max-width: 992px) {
+  .roommate-profile-form {
+    padding: 1rem;
+  }
+
+  .roommate-profile-form h5 {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .roommate-profile-form .form-label {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small screens (phones and phablets) */
+@media (max-width: 768px) {
+  .roommate-profile-form {
+    padding: 0.75rem;
+  }
+
+  .roommate-profile-form h5 {
+    font-size: 1.1rem;
+  }
+
+  .roommate-profile-form .form-label {
+    font-size: 0.9rem;
+  }
+
+  .roommate-profile-form .form-control,
+  .roommate-profile-form select {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Extra small screens (under 500px) */
+@media (max-width: 500px) {
+  .roommate-profile-form {
+    padding: 0.5rem;
+  }
+
+  .roommate-profile-form h5 {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .roommate-profile-form .form-label {
+    font-size: 0.85rem;
+  }
+
+  .roommate-profile-form .form-control,
+  .roommate-profile-form select {
+    font-size: 0.85rem;
+    padding: 0.45rem;
+  }
+
+  .roommate-profile-form button {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}

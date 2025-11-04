@@ -1,0 +1,88 @@
+.roommate-card {
+  border-radius: 12px;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Card color comes from Bootstrap's <Card> */
+}
+
+.roommate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.roommate-avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 4px solid #198754;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.roommate-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  color: var(--bs-secondary-color);
+  border-radius: 50%;
+}
+
+.roommate-card .card-title {
+  font-weight: 600;
+  color: var(--bs-body-color);
+}
+
+.compatibility-score {
+  font-size: 1.1rem;
+  color: #198754;
+  margin: 0.5rem 0;
+}
+
+.budget-range {
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+  margin-bottom: 1rem;
+}
+
+.roommate-bio {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--bs-secondary-color);
+  height: 60px;
+  overflow: hidden;
+}
+
+/* --- Responsive adjustments --- */
+@media (max-width: 767.98px) {
+  .roommate-card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .roommate-avatar,
+  .roommate-avatar-placeholder {
+    width: 70px;
+    height: 70px;
+  }
+
+  .roommate-card .card-title {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .compatibility-score {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .budget-range {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .roommate-bio {
+    font-size: 0.85rem;
+    height: 50px;
+    text-align: center;
+  }
+}

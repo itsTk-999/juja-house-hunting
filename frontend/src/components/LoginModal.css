@@ -1,0 +1,289 @@
+/* --- Login/Signup Panel Container --- */
+.login-signup-panel-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.login-signup-panel-container.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* --- Actual Panel --- */
+.login-signup-panel {
+  width: 90%;
+  max-width: 900px;
+  height: 100%;
+  background-color: var(--bs-body-bg);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.login-signup-panel-container.show .login-signup-panel {
+  transform: translateX(0);
+}
+
+/* --- Close Button --- */
+.login-signup-panel-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--bs-light);
+  z-index: 1060;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.login-signup-panel-close-btn:hover {
+  color: var(--bs-primary);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.password-toggle-btn {
+  /* Use theme-aware colors */
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-secondary-color);
+  /* Remove the blue shadow on click */
+  box-shadow: none !important;
+}
+.password-toggle-btn:hover,
+.password-toggle-btn:focus,
+.password-toggle-btn:active {
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-primary);
+  box-shadow: none !important;
+}
+
+[data-bs-theme="dark"] .login-signup-panel-close-btn {
+  color: var(--bs-light);
+}
+[data-bs-theme="dark"] .login-signup-panel-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Left Side: Form Area --- */
+.panel-form-section {
+  flex: 1;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 350px;
+  overflow-y: auto;
+  background-color: var(--bs-body-bg);
+  position: relative;
+}
+
+.panel-form-section .nav-pills {
+  margin-bottom: 2rem;
+  background-color: var(--bs-tertiary-bg);
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+.panel-form-section .nav-pills .nav-link {
+  color: var(--bs-secondary-color);
+  font-weight: 500;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.panel-form-section .nav-pills .nav-link.active {
+  background-color: var(--bs-success);
+  color: white;
+  box-shadow: 0 4px 10px rgba(25, 135, 84, 0.25);
+}
+
+.panel-form-section .btn-primary,
+.panel-form-section .btn-success {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.forgot-password-link {
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* --- Right Side: Image Area --- */
+.panel-image-section {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  border-left: 1px solid var(--bs-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.panel-image-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.panel-image-overlay h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.panel-image-overlay p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 767.98px) {
+  /* Stack vertically on mobile */
+  .login-signup-panel {
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* Image appears at top */
+  .panel-image-section {
+    order: -1; /* Move above form */
+    height: 35%;
+    border-left: none;
+    border-bottom: 1px solid var(--bs-border-color);
+    display: flex !important;
+  }
+
+  .panel-image-overlay {
+    padding: 1rem;
+    max-width: 90%;
+  }
+
+  .panel-image-overlay h2 {
+    font-size: 1.5rem;
+  }
+
+  .panel-image-overlay p {
+    font-size: 0.95rem;
+  }
+
+  .panel-form-section {
+    min-width: auto;
+    width: 100%;
+    padding: 1.5rem;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+
+  .login-signup-panel-close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 1.4rem;
+    color: var(--bs-secondary-color);
+  }
+
+  [data-bs-theme="dark"] .login-signup-panel-close-btn {
+    color: var(--bs-light);
+  }
+}
+
+@media (min-width: 768px) {
+  .login-signup-panel {
+    width: 90%;
+    height: 90vh;
+    max-height: 700px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .panel-image-section {
+    display: flex;
+  }
+  .login-signup-panel-close-btn {
+    right: auto;
+    left: 15px;
+    color: var(--bs-secondary-color);
+  }
+}
+
+@media (min-width: 992px) {
+  .panel-form-section {
+    padding: 3rem;
+  }
+}
+
+/* --- RESET/FORGOT PASSWORD PAGE --- */
+.auth-card {
+  background-color: var(--bs-card-bg);
+  border: 1px solid var(--bs-border-color-translucent) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.auth-card-header {
+  border-bottom: none !important;
+  padding: 1.5rem 2rem 1rem 2rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--bs-heading-color);
+  background-color: var(--bs-tertiary-bg);
+}
+
+.auth-card .card-body {
+  padding: 1.5rem 2rem 2rem 2rem;
+}
+
+.auth-card .form-label {
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+/* --- THIS IS THE FIX --- */
+/* This is a more specific and forceful selector */
+.form-check-label a.terms-link {
+  font-weight: 600;
+  color: var(--bs-primary) !important; /* Use !important to override */
+  text-decoration: none;
+}
+
+.form-check-label a.terms-link:hover {
+  color: var(--bs-primary-text-emphasis) !important;
+  text-decoration: underline;
+}
+
+[data-bs-theme="dark"] .form-check-label a.terms-link {
+  color: var(--bs-info) !important; /* Use a brighter blue in dark mode */
+}
+/* --- END FIX --- */

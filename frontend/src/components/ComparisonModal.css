@@ -1,0 +1,184 @@
+/* --- Modal Size & Header --- */
+.modal-dialog.modal-xl {
+  max-width: 80%;
+  margin: 1rem auto;
+}
+
+.modal-header {
+  background-color: var(--bs-tertiary-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--bs-heading-color);
+}
+
+/* --- Table Styling --- */
+.comparison-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.comparison-table th,
+.comparison-table td {
+  vertical-align: middle;
+  padding: 1rem;
+  border-width: 0 0 1px 1px;
+  border-color: var(--bs-border-color);
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+  border-left-width: 0;
+}
+
+/* --- Table Header --- */
+.comparison-table thead th {
+  background-color: var(--bs-tertiary-bg);
+  border-bottom: 2px solid #198754;
+  vertical-align: top;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+}
+
+.comparison-table thead .feature-header {
+  width: 28%;
+  text-align: left;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+}
+
+.comparison-table thead .apartment-header {
+  text-align: center;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+}
+
+.comparison-table thead .apartment-header img {
+  border: 2px solid var(--bs-border-color);
+  border-radius: 4px;
+  max-height: 80px;
+  width: auto;
+  object-fit: cover;
+}
+
+/* --- Table Body --- */
+.comparison-table tbody tr {
+  transition: background-color 0.2s ease;
+  background-color: var(--bs-body-bg);
+}
+
+.comparison-table tbody tr:nth-child(even) {
+  background-color: var(--bs-tertiary-bg);
+}
+
+.comparison-table tbody tr:hover {
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+.comparison-table tbody th {
+  text-align: left;
+  font-weight: 600;
+  width: 28%;
+  background-color: var(--bs-secondary-bg);
+  border-right: 1px solid var(--bs-border-color);
+}
+
+.comparison-table tbody td {
+  text-align: center;
+}
+
+/* --- Special Row Styling --- */
+.comparison-table .price-row td {
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: #198754;
+}
+
+.comparison-table .description-row td {
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+  color: var(--bs-secondary-color);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+/* --- Icons --- */
+.feature-icon-yes,
+.feature-icon-no {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+.feature-icon-yes {
+  color: #198754;
+}
+
+.feature-icon-no {
+  color: #dc3545;
+}
+
+/* --- Row Animations (unchanged) --- */
+@keyframes fadeInRow {
+  /* ... */
+}
+.comparison-table tbody tr {
+  animation: fadeInRow 0.5s ease forwards;
+  /* ... */
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  .modal-dialog.modal-xl {
+    max-width: 98%;
+    margin: 0.5rem auto;
+  }
+
+  .comparison-table {
+    table-layout: auto;
+    display: block;
+    overflow-x: auto; /* Scrollable on small screens */
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.5rem;
+  }
+
+  .comparison-table thead .feature-header {
+    font-size: clamp(0.85rem, 3vw, 0.95rem);
+    width: 25%;
+  }
+
+  .comparison-table thead .apartment-header {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+  }
+
+  .comparison-table thead .apartment-header img {
+    max-height: 50px;
+  }
+
+  .comparison-table tbody th {
+    font-size: clamp(0.75rem, 2.5vw, 0.8rem);
+    width: 25%;
+  }
+
+  .comparison-table .price-row td {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+  }
+
+  .comparison-table .description-row td {
+    font-size: clamp(0.7rem, 2.5vw, 0.75rem);
+    line-height: 1.4;
+  }
+
+  .feature-icon-yes,
+  .feature-icon-no {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+  }
+}

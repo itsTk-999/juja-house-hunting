@@ -1,0 +1,209 @@
+/* --- Apartments Page Header --- */
+.apartments-header {
+  position: relative;
+  padding: 4rem 1rem;
+  margin-bottom: 3rem;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(135deg, #198754 0%, #17a2b8 100%);
+}
+.apartments-header-content {
+  position: relative;
+  z-index: 2;
+}
+.apartments-header h1 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+.apartments-header p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Main Content Area Styling --- */
+.apartments-content-area {
+  .message-wrapper {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  /* --- Other User's Message --- */
+  .message-wrapper.other {
+    justify-content: flex-start;
+  }
+  .message-wrapper.other .message-bubble {
+    /* --- FIX: Use CSS Variables --- */
+    background-color: var(--bs-secondary-bg); /* Was hard-coded light grey */
+    color: var(--bs-body-color); /* Was hard-coded dark */
+    /* --- END FIX --- */
+    border-radius: 15px 15px 15px 0;
+  }
+
+  /* --- Your Own Message --- */
+  .message-wrapper.own {
+    justify-content: flex-end;
+  }
+  .message-wrapper.own .message-bubble {
+    background-color: #0d6efd; /* Blue is fine in both modes */
+    color: white;
+    border-radius: 15px 15px 0 15px;
+  }
+
+  /* --- Common Bubble Style --- */
+  .message-bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .message-text {
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .message-time {
+    font-size: 0.7rem;
+    margin-top: 5px;
+    text-align: right;
+    /* --- FIX: Use CSS Variables --- */
+    color: var(--bs-light-text-emphasis); /* (for dark) */
+    /* --- END FIX --- */
+    opacity: 0.8;
+  }
+
+  /* --- Make 'own' message time light --- */
+  .message-wrapper.own .message-time {
+    color: #f8f9fa;
+    opacity: 0.7;
+  }
+  /* This class is just a wrapper */
+}
+
+/* --- Filter Card Styling --- */
+.filter-card-custom {
+  border: none;
+  border-radius: 12px;
+  /* --- THIS IS THE FIX --- */
+  background-color: var(--bs-card-bg); /* Was hard-coded white */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  /* --- END FIX --- */
+  padding: 1.5rem;
+  position: sticky;
+  top: 80px;
+}
+
+.filter-card-custom h4 {
+  /* --- THIS IS THE FIX --- */
+  color: var(--bs-heading-color); /* Was hard-coded dark */
+  border-bottom: 1px solid var(--bs-border-color); /* Theme-aware border */
+  /* --- END FIX --- */
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.filter-subheading {
+  font-weight: 600;
+  font-size: 0.9rem;
+  /* --- THIS IS THE FIX --- */
+  color: var(--bs-secondary-color); /* Was hard-coded grey */
+  /* --- END FIX --- */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Results Area --- */
+.results-heading {
+  /* --- THIS IS THE FIX --- */
+  color: var(--bs-heading-color); /* Was hard-coded dark */
+  border-bottom: 1px solid var(--bs-border-color); /* Theme-aware border */
+  /* --- END FIX --- */
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.compare-button {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Responsive Styles for Filters --- */
+@media (max-width: 767px) {
+  /* md breakpoint */
+  .filter-card-custom {
+    position: static;
+    margin-bottom: 2rem;
+  }
+  .results-heading {
+    font-size: 1.5rem;
+  }
+}
+/* --- Extra Responsive Styles for Smaller Screens --- */
+@media (max-width: 576px) {
+  .apartments-header {
+    padding: 2rem 1rem;
+  }
+
+  .apartments-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .apartments-header p {
+    font-size: 0.9rem;
+  }
+
+  .filter-card-custom {
+    padding: 1rem;
+  }
+
+  .filter-card-custom h4 {
+    font-size: 1.1rem;
+  }
+
+  .filter-subheading {
+    font-size: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .message-bubble {
+    max-width: 90%;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .message-time {
+    font-size: 0.65rem;
+  }
+
+  .results-heading {
+    font-size: 1.3rem;
+  }
+}
+
+/* --- For extra small devices (under 400px) --- */
+@media (max-width: 400px) {
+  .apartments-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .apartments-header p {
+    font-size: 0.85rem;
+  }
+
+  .filter-card-custom {
+    padding: 0.8rem;
+  }
+
+  .message-bubble {
+    max-width: 95%;
+    font-size: 0.8rem;
+  }
+}
