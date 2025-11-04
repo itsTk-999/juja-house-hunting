@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://juja-house-hunting.onrender.com/api/$1"
+    }
+  ]
+}
