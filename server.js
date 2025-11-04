@@ -33,20 +33,20 @@ const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:3000', // For development
   'http://192.168.56.1:3000', // For testing on your network
- 'https://juja-house-hunting.vercel.app/'// For production
+ 'https://juja-house-hunting.vercel.app',
+ 'https://juja-house-hunting-a6ftddynt-lil-tks-projects.vercel.app'// For production
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    if (!origin || allowedOrigins.indexOf(origin) !== -1){
+      callback(null, true);
+}  else {
+      callback(new Error('Not allowed by CORS'));
     }
-    return callback(null, true);
-  }
+  },
+  credentials: true    
 };
 app.use(cors(corsOptions)); // Use the new options
 // --- END FIX ---
