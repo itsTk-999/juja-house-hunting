@@ -23,12 +23,13 @@ const searchesRoutes = require('./api/searches');
 const profileRoutes = require('./api/profile');
 const roommateRoutes = require('./api/roommate');
 const messageRoutes = require('./api/messages'); 
-const partnerRoutes = require('./api/partners'); // --- FIX 1: ADDED THIS LINE ---
+const partnerRoutes = require('./api/partners'); 
 
 const app = express();
 // --- 4. Create HTTP server and wrap Express app ---
 const server = http.createServer(app);
-// --- 1. NEW: CORS Configuration ---
+
+// --- THIS IS THE FIX: Correct CORS Configuration ---
 const allowedOrigins = [
   'http://localhost:3000', // For development
   'http://192.168.56.1:3000', // For testing on your network
@@ -36,11 +37,19 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: true, // Allow all origins during development
-  credentials: true // Allow credentials
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
 };
 app.use(cors(corsOptions)); // Use the new options
-// --- END NEW ---
+// --- END FIX ---
 
 const io = new Server(server, {
   cors: {
@@ -56,8 +65,8 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Successfully connected to MongoDB Atlas'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// --- Middleware (unchanged) ---
-// app.use(cors()); // --- FIX 2: REMOVED this duplicate line ---
+// --- Middleware ---
+// --- REMOVED: app.use(cors()); // This was the duplicate line ---
 app.use(express.urlencoded({ extended: true })); 
 
 // --- API Routes (unchanged) ---
@@ -70,7 +79,7 @@ app.use('/api/searches', searchesRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/roommate', roommateRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/partners', partnerRoutes); // --- FIX 3: ADDED THIS LINE ---
+app.use('/api/partners', partnerRoutes); 
 
 // --- Production Build (unchanged) ---
 if (process.env.NODE_ENV === 'production') {
