@@ -1,0 +1,12 @@
+# Dependencies
+/node_modules/
+/frontend/node_modules/
+
+# Production
+/frontend/build/
+
+# Secret Environment Variables
+.env
+
+# Misc
+.DS_Store

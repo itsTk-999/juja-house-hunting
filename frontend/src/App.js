@@ -70,7 +70,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      socket.current = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:5001");
+      socket.current = io("http://localhost:5001"); 
       socket.current.emit('addUser', user.id || user._id);
       socket.current.on('getUsers', (users) => setOnlineUsers(users));
       socket.current.on('getNotification', (data) => {
