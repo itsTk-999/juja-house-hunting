@@ -54,7 +54,55 @@ function AppNavbar({ user, onLogout, onLoginClick, unreadCount }) {
             <span className="ms-2 site-title d-none d-md-block">Juja Homes</span> 
           </Navbar.Brand>
         </LinkContainer>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <div className="d-flex align-items-center">
+          {user && (
+            <NavDropdown 
+              title={
+                <div className="d-flex align-items-center">
+                  {user.profilePicture ? (
+                    <Image src={user.profilePicture} roundedCircle className="mobile-navbar-avatar" />
+                  ) : (
+                    <FaUserCircle className="mobile-navbar-avatar-placeholder" />
+                  )}
+                </div>
+              } 
+              id="mobile-nav-dropdown"
+              align="end"
+              className="mobile-profile-dropdown"
+            >
+              <LinkContainer to="/profile"><NavDropdown.Item><FaUserCircle className="me-2" />My Profile</NavDropdown.Item></LinkContainer>
+              {isTenant && (
+                <>
+                  <LinkContainer to="/my-preferences"><NavDropdown.Item><FaRegHeart className="me-2" />My Preferences</NavDropdown.Item></LinkContainer>
+                  <LinkContainer to="/my-roommate-profile"><NavDropdown.Item><FaUserCircle className="me-2" />My Roommate Profile</NavDropdown.Item></LinkContainer>
+                  <LinkContainer to="/messages/inbox">
+                    <NavDropdown.Item>
+                      <FaCommentDots className="me-2" /> Messages 
+                      {unreadCount > 0 && <Badge bg="success" pill className="ms-2">{unreadCount}</Badge>}
+                    </NavDropdown.Item>
+                  </LinkContainer>
+                </>
+              )}
+              {isLandlord && (
+                <LinkContainer to="/my-listings"><NavDropdown.Item><FaBuilding className="me-2" />My Listings</NavDropdown.Item></LinkContainer>
+              )}
+              {isAdmin && (
+                <>
+                  <LinkContainer to="/my-listings"><NavDropdown.Item><FaBuilding className="me-2" />My Listings</NavDropdown.Item></LinkContainer>
+                  <LinkContainer to="/my-preferences"><NavDropdown.Item><FaRegHeart className="me-2" />My Preferences</NavDropdown.Item></LinkContainer>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Header>Admin</NavDropdown.Header>
+                  <LinkContainer to="/admin/partners"><NavDropdown.Item><FaWrench className="me-2" />Manage Partners</NavDropdown.Item></LinkContainer>
+                </>
+              )}
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={handleLogout} className="text-danger">
+                <FaSignOutAlt className="me-2" /> Logout
+              </NavDropdown.Item>
+            </NavDropdown>
+          )}
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        </div>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <LinkContainer to="/"><Nav.Link>Home</Nav.Link></LinkContainer>
@@ -68,17 +116,16 @@ function AppNavbar({ user, onLogout, onLoginClick, unreadCount }) {
           </Nav>
 
           <Nav className="ms-auto d-flex align-items-center flex-row"> 
-            <Form.Check 
-              type="switch"
-              id="theme-switch"
-              className="theme-switch me-3" 
-              label={theme === 'light' ? 
-                     <FaSun className="text-warning"/> : 
-                     <FaMoon className="text-light"/>
-                    }
-              checked={theme === 'dark'} 
-              onChange={toggleTheme} 
-            />
+            <button 
+              onClick={toggleTheme}
+              className="theme-switch me-3"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? 
+                <FaSun className="text-warning"/> : 
+                <FaMoon className="text-light"/>
+              }
+            </button>
 
             {user ? (
               <NavDropdown 
@@ -94,6 +141,7 @@ function AppNavbar({ user, onLogout, onLoginClick, unreadCount }) {
                 } 
                 id="basic-nav-dropdown"
                 align="end"
+                className="profile-dropdown"
               >
                 <LinkContainer to="/profile"><NavDropdown.Item><FaUserCircle className="me-2" />My Profile</NavDropdown.Item></LinkContainer>
                 

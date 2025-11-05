@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Alert, Spinner, Button, Dropdown } from 'react-bootstrap'; 
+import { toast } from 'react-toastify';
 import ApartmentCard from '../components/ApartmentCard';
 import ComparisonModal from '../components/ComparisonModal'; 
 import { authFetch } from '../utils/authFetch'; 
@@ -52,8 +53,7 @@ function Apartments({ user, setShowLoginModal }) {
   const [showSaveSuccess, setShowSaveSuccess] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(6); 
   const [likedProperties, setLikedProperties] = useState(new Set());
-
-  // Load Saved Searches
+  const [activeFilterTab, setActiveFilterTab] = useState('basics');
   useEffect(() => {
     // Only load searches if logged in
     if (user) {
@@ -121,7 +121,6 @@ function Apartments({ user, setShowLoginModal }) {
   };
   
   const handleLikeToggle = async (propertyId) => {
-    // Check for user *before* toggling
     if (!user) {
       setShowLoginModal(true); // Show login modal if not logged in
       return;
@@ -134,6 +133,7 @@ function Apartments({ user, setShowLoginModal }) {
       newLikedProperties.add(propertyId);
     }
     setLikedProperties(newLikedProperties);
+
     try {
       const response = await authFetch(`/api/preferences/like/${propertyId}`, {
         method: 'POST',
@@ -144,7 +144,7 @@ function Apartments({ user, setShowLoginModal }) {
         if (errorSet.has(propertyId)) { errorSet.delete(propertyId); }
         else { errorSet.add(propertyId); }
         setLikedProperties(errorSet);
-        alert("Failed to update preference. Please try again.");
+        toast.error("Failed to update preference. Please try again.");
       }
     } catch (err) {
       console.error(err);
@@ -152,7 +152,7 @@ function Apartments({ user, setShowLoginModal }) {
       if (errorSet.has(propertyId)) { errorSet.delete(propertyId); }
       else { errorSet.add(propertyId); }
       setLikedProperties(errorSet);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
@@ -176,30 +176,49 @@ function Apartments({ user, setShowLoginModal }) {
     setFilters(initialFilterState);
   };
 
+  const [searchName, setSearchName] = useState("");
+
   const saveCurrentSearch = async () => {
     if (!user) {
       setShowLoginModal(true);
       return;
     }
-    const searchName = prompt("Enter a name for this search:", `Search ${savedSearches.length + 1}`);
-    if (searchName) {
-      try {
-        const newSearch = { name: searchName, filters: { ...filters } };
-        const response = await authFetch('/api/searches', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newSearch)
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to save search");
-        }
-        setSavedSearches(prevSearches => [...prevSearches, data]);
-        setShowSaveSuccess(true);
-        setTimeout(() => setShowSaveSuccess(false), 3000); 
-      } catch (err) {
-        setError(err.message);
+
+    if (!searchName.trim()) {
+      toast.error("Please enter a name for your search");
+      return;
+    }
+
+    try {
+      const newSearch = { 
+        name: searchName, 
+        filters: { ...filters },
+        createdAt: new Date().toISOString()
+      };
+
+      const response = await authFetch('/api/searches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSearch)
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to save search");
       }
+
+      setSavedSearches(prevSearches => [...prevSearches, data]);
+      setSearchName(""); // Clear the input
+      setShowSaveSuccess(true);
+      toast.success("Search saved successfully!");
+      
+      setTimeout(() => {
+        setShowSaveSuccess(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error("Save search error:", err);
+      toast.error(err.message || "Failed to save search");
     }
   };
 
@@ -266,126 +285,256 @@ function Apartments({ user, setShowLoginModal }) {
           {/* --- Filters Column --- */}
           <Col md={3}>
             <div className="filter-card-custom" data-aos="fade-right">
-              <div className="d-flex justify-content-between align-items-center mb-3"> 
+              <div className="d-flex justify-content-between align-items-center mb-2"> 
                 <h4>Filters</h4>
-                <Button variant="outline-secondary" size="sm" onClick={clearFilters}>
-                  Clear All
-                </Button>
               </div>
+              
+              {/* Mobile Filter Tabs */}
+              <div className="mobile-filter-tabs d-md-none">
+                <button 
+                  className={`filter-tab ${activeFilterTab === 'basics' ? 'active' : ''}`}
+                  onClick={() => setActiveFilterTab('basics')}
+                >
+                  Basics
+                </button>
+                <button 
+                  className={`filter-tab ${activeFilterTab === 'features' ? 'active' : ''}`}
+                  onClick={() => setActiveFilterTab('features')}
+                >
+                  Features
+                </button>
+                <button 
+                  className={`filter-tab ${activeFilterTab === 'amenities' ? 'active' : ''}`}
+                  onClick={() => setActiveFilterTab('amenities')}
+                >
+                  Amenities
+                </button>
+              </div>
+              
               <Form>
-                <Form.Group className="mb-3 pb-3 border-bottom" controlId="showAvailableOnly">
-                  <Form.Check 
-                    type="switch"
-                    id="availability-switch"
-                    label="Show only available"
-                    name="showAvailableOnly"
-                    checked={filters.showAvailableOnly}
-                    onChange={handleFilterChange}
-                  />
-                </Form.Group>
+                <div className={`filter-section basics-section ${activeFilterTab === 'basics' ? 'd-block' : 'd-none d-md-block'}`}>
+                  <h5 className="filter-subheading">Basics</h5>
+                  <div className="basics-filters">
+                    <div className="form-group">
+                      <Form.Check 
+                        type="switch"
+                        id="availability-switch"
+                        label="Show only available"
+                        name="showAvailableOnly"
+                        checked={filters.showAvailableOnly}
+                        onChange={handleFilterChange}
+                      />
+                    </div>
 
-                <h5 className="filter-subheading">Basics</h5>
-                <Form.Group className="mb-3">
-                  <Form.Label>Location</Form.Label>
-                  <Form.Select name="location" value={filters.location} onChange={handleFilterChange}>
-                    <option value="">All Locations</option>
-                    <option value="Gate A">Gate A</option>
-                    <option value="Gate B">Gate B</option>
-                    <option value="Gate C">Gate C</option>
-                    <option value="Gate D">Gate D</option>
-                    <option value="Gate E">Gate E</option>
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Price Range (KSH)</Form.Label>
-                  <Form.Select name="priceRange" value={filters.priceRange} onChange={handleFilterChange}>
-                    <option value="">All Prices</option>
-                    <option value="3000-4000">3,000 - 4,000</option>
-                    <option value="4000-6000">4,000 - 6,000</option>
-                    <option value="6000-8000">6,000 - 8,000</option>
-                    <option value="8000-12000">8,000 - 12,000</option>
-                    <option value="12000-20000">12,000 - 20,000</option>
-                    <option value="20000-999999">20,000+</option>
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Room Type</Form.Label>
-                  <Form.Select name="roomType" value={filters.roomType} onChange={handleFilterChange}>
-                    <option value="">All Types</option>
-                    <option value="Single Room">Single Room</option>
-                    <option value="Bedsitter">Bedsitter</option>
-                    <option value="One Bedroom">One Bedroom</option>
-                    <option value="Two Bedroom">Two Bedroom</option>
-                    <option value="Three Bedroom">Three Bedroom</option>
-                  </Form.Select>
-                </Form.Group>
-
-                <h5 className="filter-subheading">Features</h5>
-                <Form.Group className="mb-3">
-                  <Form.Label>Furnishing</Form.Label>
-                  <Form.Select name="furnishing" value={filters.furnishing} onChange={handleFilterChange}>
-                    <option value="">Any</option>
-                    <option value="Furnished">Furnished</option>
-                    <option value="Unfurnished">Unfurnished</option>
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Water</Form.Label>
-                  <Form.Select name="water" value={filters.water} onChange={handleFilterChange}>
-                    <option value="">Any</option>
-                    <option value="24/7">24/7</option>
-                    <option value="Reliable">Reliable</option>
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Wi-Fi</Form.Label>
-                  <Form.Select name="wifi" value={filters.wifi} onChange={handleFilterChange}>
-                    <option value="">Any</option>
-                    <option value="Included">Included</option>
-                    <option value="Available">Available (Payable)</option>
-                    <option value="Not Included">Not Included</option>
-                  </Form.Select>
-                </Form.Group>
-
-                <h5 className="filter-subheading">Amenities</h5>
-                <Form.Group className="mb-2"><Form.Check type="checkbox" label="Parking" name="parking" checked={filters.parking} onChange={handleFilterChange} /></Form.Group>
-                 <Form.Group className="mb-2"><Form.Check type="checkbox" label="Balcony" name="balcony" checked={filters.balcony} onChange={handleFilterChange} /></Form.Group>
-                 <Form.Group className="mb-2"><Form.Check type="checkbox" label="Biometric Access" name="biometric" checked={filters.biometric} onChange={handleFilterChange} /></Form.Group>
-                 <Form.Group className="mb-2"><Form.Check type="checkbox" label="Hot Shower" name="hotShower" checked={filters.hotShower} onChange={handleFilterChange} /></Form.Group>
-              </Form>
-
-              {/* --- SAVE SEARCH SECTION (Conditional) --- */}
-              {user && (
-                <div className="mt-4 pt-3 border-top">
-                  <h5 className="filter-subheading">Saved Searches</h5>
-                  {showSaveSuccess && <Alert variant="success" size="sm" className="mt-2">Search saved!</Alert>} 
-                  <div className="d-grid gap-2 mt-2"> 
-                    <Button variant="outline-primary" size="sm" onClick={saveCurrentSearch}>
-                      Save Current Search
-                    </Button>
+                    <div className="form-group">
+                      <Form.Label>Location</Form.Label>
+                      <Form.Select name="location" value={filters.location} onChange={handleFilterChange}>
+                        <option value="">All Locations</option>
+                        <option value="Gate A">Gate A</option>
+                        <option value="Gate B">Gate B</option>
+                        <option value="Gate C">Gate C</option>
+                        <option value="Gate D">Gate D</option>
+                        <option value="Gate E">Gate E</option>
+                      </Form.Select>
+                    </div>
                     
-                    {savedSearches.length > 0 && (
-                      <Dropdown>
-                        <Dropdown.Toggle variant="outline-secondary" size="sm" id="dropdown-saved-searches" className="w-100"> 
-                          Load Saved Search
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu className="w-100"> 
-                          {savedSearches.map((search) => (
-                            <Dropdown.Item key={search._id} onClick={() => applySavedSearch(search.filters)} className="d-flex justify-content-between align-items-center"> 
-                             {search.name}
-                             <Button 
-                               variant="link" size="sm" className="text-danger p-0 ms-2" 
-                               onClick={(e) => {e.stopPropagation(); deleteSavedSearch(search._id);}}
-                               title="Delete saved search"
-                             > &times; </Button>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    )}
+                    <div className="form-group">
+                      <Form.Label>Price Range (KSH)</Form.Label>
+                      <Form.Select name="priceRange" value={filters.priceRange} onChange={handleFilterChange}>
+                        <option value="">All Prices</option>
+                        <option value="3000-4000">3,000 - 4,000</option>
+                        <option value="4000-6000">4,000 - 6,000</option>
+                        <option value="6000-8000">6,000 - 8,000</option>
+                        <option value="8000-12000">8,000 - 12,000</option>
+                        <option value="12000-20000">12,000 - 20,000</option>
+                        <option value="20000-999999">20,000+</option>
+                      </Form.Select>
+                    </div>
+                    
+                    <div className="form-group">
+                      <Form.Label>Room Type</Form.Label>
+                      <Form.Select name="roomType" value={filters.roomType} onChange={handleFilterChange}>
+                        <option value="">All Types</option>
+                        <option value="Single Room">Single Room</option>
+                        <option value="Bedsitter">Bedsitter</option>
+                        <option value="One Bedroom">One Bedroom</option>
+                        <option value="Two Bedroom">Two Bedroom</option>
+                        <option value="Three Bedroom">Three Bedroom</option>
+                      </Form.Select>
+                    </div>
                   </div>
                 </div>
-              )}
+
+                <div className={`filter-section features-section ${activeFilterTab === 'features' ? 'd-block' : 'd-none d-md-block'}`}>
+                  <h5 className="filter-subheading">Features</h5>
+                  <div className="features-filters">
+                    <div className="form-group">
+                      <Form.Label>Furnishing</Form.Label>
+                      <Form.Select
+                        name="furnishing"
+                        value={filters.furnishing}
+                        onChange={handleFilterChange}
+                      >
+                        <option value="">Any</option>
+                        <option value="Furnished">Furnished</option>
+                        <option value="Semi-Furnished">Semi-Furnished</option>
+                        <option value="Unfurnished">Unfurnished</option>
+                      </Form.Select>
+                    </div>
+                  
+                    <div className="form-group">
+                      <Form.Label>Water</Form.Label>
+                      <Form.Select
+                        name="water"
+                        value={filters.water}
+                        onChange={handleFilterChange}
+                      >
+                        <option value="">Any</option>
+                        <option value="24/7">24/7</option>
+                        <option value="Reliable">Reliable</option>
+                        <option value="Limited">Limited</option>
+                      </Form.Select>
+                    </div>
+                  
+                    <div className="form-group">
+                      <Form.Label>WiFi</Form.Label>
+                      <Form.Select
+                        name="wifi"
+                        value={filters.wifi}
+                        onChange={handleFilterChange}
+                      >
+                        <option value="">Any</option>
+                        <option value="Included">Included</option>
+                        <option value="Available">Available (Payable)</option>
+                        <option value="Not Included">Not Available</option>
+                      </Form.Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`filter-section amenities-section ${activeFilterTab === 'amenities' ? 'd-block' : 'd-none d-md-block'}`}>
+                  <h5 className="filter-subheading">Amenities</h5>
+                  <div className="amenities-filters">
+                    <Form.Group className="mb-2"><Form.Check type="checkbox" label="Parking" name="parking" checked={filters.parking} onChange={handleFilterChange} /></Form.Group>
+                    <Form.Group className="mb-2"><Form.Check type="checkbox" label="Balcony" name="balcony" checked={filters.balcony} onChange={handleFilterChange} /></Form.Group>
+                    <Form.Group className="mb-2"><Form.Check type="checkbox" label="Biometric Access" name="biometric" checked={filters.biometric} onChange={handleFilterChange} /></Form.Group>
+                    <Form.Group className="mb-2"><Form.Check type="checkbox" label="Hot Shower" name="hotShower" checked={filters.hotShower} onChange={handleFilterChange} /></Form.Group>
+                  </div>
+                </div>
+
+                {/* The Save Search Section and Filters Actions */}
+                {user && (
+                  <div className="save-search-section">
+                    <Form.Group className="mb-3">
+                      <Form.Control
+                        type="text"
+                        placeholder="Give your search a name..."
+                        value={searchName}
+                        onChange={(e) => setSearchName(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <div className="filter-actions">
+                      <Button variant="outline-danger" className="clear-all-btn" onClick={clearFilters}>
+                        Clear All
+                      </Button>
+
+                      <Button 
+                        variant="success" 
+                        className="save-filters-btn"
+                        onClick={saveCurrentSearch}
+                        disabled={!searchName.trim()}
+                      >
+                        Save Filters
+                      </Button>
+
+                      <Dropdown className="saved-searches-dropdown">
+                        <Dropdown.Toggle variant="primary">
+                          Saved Searches {savedSearches.length > 0 && `(${savedSearches.length})`}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="w-100">
+                          {savedSearches.length === 0 ? (
+                            <Dropdown.Item disabled>No saved searches</Dropdown.Item>
+                          ) : (
+                            savedSearches.map((search) => (
+                              <Dropdown.Item 
+                                key={search._id} 
+                                className="d-flex justify-content-between align-items-center"
+                                onClick={() => applySavedSearch(search.filters)}
+                              >
+                                <span className="text-truncate me-2">{search.name}</span>
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  className="text-danger p-0"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteSavedSearch(search._id);
+                                  }}
+                                  style={{ minWidth: 'auto' }}
+                                >
+                                  ×
+                                </Button>
+                              </Dropdown.Item>
+                            ))
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+
+                    {showSaveSuccess && (
+                      <Alert variant="success" className="save-success-alert mt-3">
+                        Search saved successfully!
+                      </Alert>
+                    )}
+
+                    {savedSearches.length > 0 && (
+                      <div className="saved-searches-list">
+                        {savedSearches.map((search) => (
+                          <div key={search._id} className="saved-search-item">
+                            <span className="search-name">{search.name}</span>
+                            <div className="actions">
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                className="apply-btn"
+                                onClick={() => applySavedSearch(search.filters)}
+                              >
+                                Apply
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                className="delete-btn"
+                                onClick={() => deleteSavedSearch(search._id)}
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {savedSearches.length === 0 && (
+                      <p className="text-center text-muted mb-0">
+                        No saved searches yet. Save your current filters to access them later!
+                      </p>
+                    )}
+                  </div>
+                )}
+                
+                {/* Non-logged in users only see Clear All */}
+                {!user && (
+                  <div className="filter-actions">
+                    <Button variant="outline-danger" className="clear-all-btn" onClick={clearFilters}>
+                      Clear All
+                    </Button>
+                  </div>
+                )}
+              </Form>
+
+              {/* --- Removed duplicate save search section --- */}
             </div>
           </Col>
 
