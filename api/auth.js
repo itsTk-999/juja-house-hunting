@@ -89,14 +89,11 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       console.log(`[Forgot Password] User not found: ${email}`);
-      // For security, we still say a link *might* have been sent
       return res.json({ message: "If an account with this email exists, a reset link has been sent." });
     }
 
     const resetToken = jwt.sign({ user: { id: user.id } }, process.env.JWT_SECRET, { expiresIn: '15m' });
     
-    // Use an environment variable for the frontend URL if available, otherwise fallback
-    // IMPORTANT: In Render, set FRONTEND_URL to 'https://your-vercel-app.vercel.app'
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
@@ -104,17 +101,19 @@ router.post('/forgot-password', async (req, res) => {
       from: `"Juja Hunt" <${process.env.EMAIL_USER}>`, 
       to: user.email, 
       subject: `Password Reset Request`, 
-      text: `You requested a password reset. Click this link to reset your password: ${resetUrl}\n\nThis link expires in 15 minutes.`
+      text: `You requested a password reset. Click this link to reset your password: ${resetUrl}\n\nThis link expires in 15 minutes.`,
+      html: `<p>You requested a password reset. Click this link to reset your password: <a href="${resetUrl}">${resetUrl}</a></p><p>This link expires in 15 minutes.</p>` // Added HTML body for better compatibility
     };
 
-    console.log("[Forgot Password] Attempting to send email via Port 587...");
-    await transporter.sendMail(mailOptions);
-    console.log("[Forgot Password] Email sent successfully!");
+    console.log("[Forgot Password] Attempting to send email...");
+    // Await the email sending promise
+    const info = await transporter.sendMail(mailOptions);
+    console.log("[Forgot Password] Email sent successfully! Message ID:", info.messageId);
     
     res.json({ message: "If an account with this email exists, a reset link has been sent." });
 
   } catch (err) {
-    console.error("!!! PASSWORD RESET ERROR !!!", err);
+    console.error("!!! PASSWORD RESET ERROR !!!", err); // THIS WILL NOW SHOW THE EXACT ERROR
     // Send a generic 500 error so the frontend doesn't get a JSON parse error
     res.status(500).json({ message: "Server error sending email. Please try again later." });
   }
