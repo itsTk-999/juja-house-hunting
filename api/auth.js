@@ -110,7 +110,7 @@ router.post("/forgot-password", async (req, res) => {
       
       <p style="color: #aaa; font-size: 12px;">
         © ${new Date().getFullYear()} Juja House Hunt. All rights reserved.<br>
-        <a href="https://jujahousehunt.sbs" style="color: #007bff; text-decoration: none;">Visit our website</a>
+        <a href="https://juja-house-hunting.vercel.app/" style="color: #007bff; text-decoration: none;">Visit our website</a>
       </p>
     </div>
   </div>
