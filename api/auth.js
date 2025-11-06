@@ -89,7 +89,7 @@ router.post("/forgot-password", async (req, res) => {
     `;
 
     await brevoClient.sendTransacEmail({
-      sender: { name: "Juja Home", email: "no-reply@jujahousehunt.sbs" },
+      sender: { name: "Juja Home", email: "jujahousehunt@gmail.com" },
       to: [{ email }],
       subject: "Password Reset Request - Juja Home",
       htmlContent,
