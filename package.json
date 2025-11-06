@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "@google-cloud/storage": "^7.17.2",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
