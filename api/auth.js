@@ -81,12 +81,41 @@ router.post("/forgot-password", async (req, res) => {
     const resetUrl = `https://${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     const htmlContent = `
-      <p>Hello ${user.name || ""},</p>
-      <p>You requested a password reset for your Juja Home account.</p>
-      <p>Click the link below to reset your password (valid for 15 minutes):</p>
-      <p><a href="${resetUrl}" target="_blank">${resetUrl}</a></p>
-      <p>If you did not request this, please ignore this email.</p>
-    `;
+  <div style="font-family: Arial, sans-serif; background-color: #f7f8fa; padding: 40px; text-align: center;">
+    <div style="max-width: 520px; background: #ffffff; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 30px;">
+      
+      <img src="https://juja-house-hunting.vercel.app/images/logo.png" alt="Juja House Hunt Logo" style="width: 120px; margin-bottom: 20px;">
+      
+      <h2 style="color: #2c3e50; margin-bottom: 10px;">Password Reset Request</h2>
+      
+      <p style="color: #555; line-height: 1.6;">
+        Hi <strong>${user.name || ''}</strong>,<br><br>
+        We received a request to reset your password for your 
+        <strong>Juja House Hunt</strong> account.
+      </p>
+      
+      <a href="${resetUrl}" 
+         style="display: inline-block; background-color: #007bff; color: #ffffff; 
+                text-decoration: none; padding: 12px 25px; border-radius: 6px; 
+                font-weight: bold; margin: 20px 0; font-size: 16px;">
+        Reset Password
+      </a>
+      
+      <p style="color: #999; font-size: 13px; margin-top: 20px;">
+        If you didn’t request this, you can safely ignore this email.<br>
+        This link will expire in <strong>15 minutes</strong>.
+      </p>
+      
+      <hr style="margin: 25px 0; border: none; border-top: 1px solid #eee;">
+      
+      <p style="color: #aaa; font-size: 12px;">
+        © ${new Date().getFullYear()} Juja House Hunt. All rights reserved.<br>
+        <a href="https://jujahousehunt.sbs" style="color: #007bff; text-decoration: none;">Visit our website</a>
+      </p>
+    </div>
+  </div>
+`;
+
 
     await brevoClient.sendTransacEmail({
       sender: { name: "Juja Home", email: "jujahousehunt@gmail.com" },
