@@ -7,30 +7,31 @@ const nodemailer = require('nodemailer');
 
 router.use(express.json());
 
-// --- 1. UPDATED: More Robust Nodemailer Config ---
-// We use explicit settings instead of 'service: gmail' for better production reliability.
+// --- 1. UPDATED: Robust Nodemailer Config for Render ---
+// We switched to Port 587 (STARTTLS) which is less likely to timeout.
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Use SSL
+  port: 587, 
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  // Helpful for debugging in some environments
   tls: {
-    rejectUnauthorized: false 
-  }
+    rejectUnauthorized: false // Helps avoid some SSL certificate issues in dev/free tier
+  },
+  // Add timeouts so it doesn't hang forever if it fails
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 5000,    // 5 seconds
+  socketTimeout: 10000      // 10 seconds
 });
 
-// --- 2. NEW: Verify connection on startup ---
-// This will log to your Render dashboard if the connection fails immediately.
+// Verify connection on startup (helps debugging in Render logs)
 transporter.verify((error, success) => {
   if (error) {
-    console.error("!!! NODEMAILER CONNECTION ERROR !!!");
-    console.error(error);
+    console.error("!!! NODEMAILER CONNECTION ERROR !!!", error.message);
   } else {
-    console.log(">>> Nodemailer is ready to send emails");
+    console.log(">>> Nodemailer is ready to send emails (Port 587)");
   }
 });
 
@@ -79,23 +80,23 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// --- POST /api/auth/forgot-password (UPDATED WITH LOGS) ---
+// --- POST /api/auth/forgot-password (unchanged) ---
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
-  console.log(`[Forgot Password] Request received for: ${email}`); // DEBUG LOG
+  console.log(`[Forgot Password] Request received for: ${email}`);
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      console.log(`[Forgot Password] User not found: ${email}`); // DEBUG LOG
+      console.log(`[Forgot Password] User not found: ${email}`);
+      // For security, we still say a link *might* have been sent
       return res.json({ message: "If an account with this email exists, a reset link has been sent." });
     }
 
     const resetToken = jwt.sign({ user: { id: user.id } }, process.env.JWT_SECRET, { expiresIn: '15m' });
     
-    // --- CRITICAL: Ensure this URL matches your Vercel frontend URL in production ---
-    // For now we keep localhost for testing, but IN PRODUCTION this must be your Vercel URL.
-    // Better approach: use an environment variable for the frontend URL.
+    // Use an environment variable for the frontend URL if available, otherwise fallback
+    // IMPORTANT: In Render, set FRONTEND_URL to 'https://your-vercel-app.vercel.app'
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
@@ -103,20 +104,18 @@ router.post('/forgot-password', async (req, res) => {
       from: `"Juja Hunt" <${process.env.EMAIL_USER}>`, 
       to: user.email, 
       subject: `Password Reset Request`, 
-      text: `Click this link to reset your password: ${resetUrl}\nThis link expires in 15 minutes.`
+      text: `You requested a password reset. Click this link to reset your password: ${resetUrl}\n\nThis link expires in 15 minutes.`
     };
 
-    console.log("[Forgot Password] Attempting to send email..."); // DEBUG LOG
+    console.log("[Forgot Password] Attempting to send email via Port 587...");
     await transporter.sendMail(mailOptions);
-    console.log("[Forgot Password] Email sent successfully!"); // DEBUG LOG
+    console.log("[Forgot Password] Email sent successfully!");
     
     res.json({ message: "If an account with this email exists, a reset link has been sent." });
 
   } catch (err) {
-    // --- 3. IMPROVED ERROR LOGGING ---
-    console.error("!!! PASSWORD RESET ERROR !!!");
-    console.error(err); // This will show the exact error from Google in Render logs
-    // Send JSON back so the frontend doesn't get "Unexpected token 'A'"
+    console.error("!!! PASSWORD RESET ERROR !!!", err);
+    // Send a generic 500 error so the frontend doesn't get a JSON parse error
     res.status(500).json({ message: "Server error sending email. Please try again later." });
   }
 });
@@ -132,12 +131,14 @@ router.post('/reset-password/:token', async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
+        
         const user = await User.findByIdAndUpdate(
             decoded.user.id,
             { $set: { password: hashedPassword } },
             { new: true } 
         );
         if (!user) return res.status(400).json({ message: "Invalid token." });
+        
         res.json({ message: "Password has been reset successfully. You can now log in." });
     } catch (err) {
         if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
