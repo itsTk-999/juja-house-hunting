@@ -84,7 +84,7 @@ router.post('/forgot-password', async (req, res) => {
 
     // ✅ Send via Resend API
     const { error } = await resend.emails.send({
-      from: 'Juja Home <noreply@jujahousehunt.sbs>',
+      from: 'Juja Home <jujahome@resend.dev>',
       to: email,
       subject: 'Password Reset Request - Juja Home',
       html: htmlContent,
