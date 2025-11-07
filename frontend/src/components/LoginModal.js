@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './LoginModal.css'; 
 // --- 2. Import FaEye and FaEyeSlash ---
 import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa'; 
-import loginBgImage from '../assets/login-bg.jpg'; 
+
 
 function LoginModal({ show, onHide, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
