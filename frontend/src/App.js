@@ -1,37 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'; 
 import { io } from "socket.io-client";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';  // ✅ ADD THIS
+import axios from 'axios';
 import { authFetch } from './utils/authFetch'; 
 import AppNavbar from './components/Navbar';
 import LoginModal from './components/LoginModal'; 
-import Home from './pages/Home';
-import Apartments from './pages/Apartments';
-import ApartmentDetail from './pages/ApartmentDetail';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Profile from './pages/Profile'; 
-import MyListings from './pages/MyListings'; 
-import CreateListing from './pages/CreateListing'; 
-import EditListing from './pages/EditListing';
-import MyPreferences from './pages/MyPreferences'; 
-import RoommateFinder from './pages/RoommateFinder'; 
-import MyRoommateProfile from './pages/MyRoommateProfile'; 
-import RoommateProfileDetail from './pages/RoommateProfileDetail'; 
-import Messages from './pages/Messages'; 
-import Resources from './pages/Resources'; 
-import AdminPartners from './pages/AdminPartners'; 
-import PartnerDetail from './pages/PartnerDetail'; 
-import ResetPassword from './pages/ResetPassword'; 
-import ForgotPassword from './pages/ForgotPassword';
-import VerificationPending from './pages/VerificationPending';
-import TermsAndConditions from './pages/TermsAndConditions';
 import { Container, Spinner } from 'react-bootstrap';
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+
+// --- STATIC PAGES (frequent/lightweight) ---
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import TermsAndConditions from './pages/TermsAndConditions';
+
+// --- LAZY LOAD HEAVIER OR RARELY VISITED PAGES ---
+const Apartments = React.lazy(() => import('./pages/Apartments'));
+const ApartmentDetail = React.lazy(() => import('./pages/ApartmentDetail'));
+const Profile = React.lazy(() => import('./pages/Profile'));
+const MyListings = React.lazy(() => import('./pages/MyListings'));
+const CreateListing = React.lazy(() => import('./pages/CreateListing'));
+const EditListing = React.lazy(() => import('./pages/EditListing'));
+const MyPreferences = React.lazy(() => import('./pages/MyPreferences'));
+const RoommateFinder = React.lazy(() => import('./pages/RoommateFinder'));
+const MyRoommateProfile = React.lazy(() => import('./pages/MyRoommateProfile'));
+const RoommateProfileDetail = React.lazy(() => import('./pages/RoommateProfileDetail'));
+const Messages = React.lazy(() => import('./pages/Messages'));
+const Resources = React.lazy(() => import('./pages/Resources'));
+const AdminPartners = React.lazy(() => import('./pages/AdminPartners'));
+const PartnerDetail = React.lazy(() => import('./pages/PartnerDetail'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
+const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
+const VerificationPending = React.lazy(() => import('./pages/VerificationPending'));
 
 function App() {
   const [user, setUser] = useState(null);
@@ -94,7 +98,6 @@ function App() {
     localStorage.setItem('user', JSON.stringify(loginData.user));
     localStorage.setItem('token', loginData.token); 
 
-    // ✅ Add axios default header on login
     axios.defaults.headers.common['Authorization'] = `Bearer ${loginData.token}`;
     if (authFetch?.setToken) authFetch.setToken(loginData.token);
 
@@ -102,7 +105,6 @@ function App() {
     setShowLoginModal(false);
   };
   
-  // ✅ FIXED LOGOUT FUNCTION
   const handleLogout = () => { 
     setUser(null);
     localStorage.removeItem('user');
@@ -110,11 +112,9 @@ function App() {
     setUnreadCount(0);
     window.location.href = '/';
 
-    // 🧠 The missing cleanup:
     delete axios.defaults.headers.common['Authorization'];
     if (authFetch?.clearToken) authFetch.clearToken?.();
 
-    // Optional: clear cookies/sessionStorage if used
     sessionStorage.clear();
 
     navigate('/'); 
@@ -185,38 +185,47 @@ function App() {
         onHide={() => setShowLoginModal(false)} 
         onLoginSuccess={handleLoginSuccess}
       />
-      
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<Container fluid="lg" className="mt-4"><About /></Container>} />
-        <Route path="/contact" element={<Container fluid="lg" className="mt-4"><Contact /></Container>} />
-        <Route path="/resources" element={<Container fluid="lg" className="mt-4"><Resources /></Container>} />
-        <Route path="/resources/partner/:partnerId" element={<Container fluid="lg" className="mt-4"><PartnerDetail /></Container>} />
-        <Route path="/reset-password/:token" element={<Container fluid="lg" className="mt-4"><ResetPassword /></Container>} />
-        <Route path="/forgot-password" element={<Container fluid="lg" className="mt-4"><ForgotPassword /></Container>} />
-        <Route path="/verification-pending" element={<Container fluid="lg" className="mt-4"><VerificationPending /></Container>} />
-        <Route path="/terms-and-conditions" element={<Container fluid="lg" className="mt-4"><TermsAndConditions /></Container>} />
-        <Route path="/apartments" element={<Container fluid="lg" className="mt-4"><Apartments user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
-        <Route path="/apartment/:id" element={<Container fluid="lg" className="mt-4"><ApartmentDetail user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
-        <Route path="/roommates" element={<Container fluid="lg" className="mt-4"><RoommateFinder user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
-        <Route path="/roommate/:profileId" element={<Container fluid="lg" className="mt-4"><RoommateProfileDetail user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
 
-        {/* Protected routes */}
-        <Route path="/profile" element={ user ? ( <Container fluid="lg" className="mt-4"><Profile user={user} onUpdateUser={handleUpdateUser} /></Container> ) : <Navigate to="/" /> } />
-        <Route path="/my-preferences" element={ user ? ( <Container fluid="lg"className="mt-4"><MyPreferences /></Container> ) : <Navigate to="/" /> } />
-        <Route path="/my-roommate-profile" element={ user ? ( <Container fluid="lg" className="mt-4"><MyRoommateProfile user={user} /></Container> ) : <Navigate to="/" /> } />
-        <Route path="/messages/:userId" element={ user ? ( <Container fluid="lg" className="mt-4"><Messages socket={socket} user={user} onlineUsers={onlineUsers} onMessagesRead={fetchUnreadCount} /></Container> ) : <Navigate to="/" /> } />
-        <Route path="/messages/inbox" element={ user ? ( <Container fluid="lg" className="mt-4"><Messages socket={socket} user={user} onlineUsers={onlineUsers} onMessagesRead={fetchUnreadCount} /></Container> ) : <Navigate to="/" /> } />
+      {/* Wrap only lazy-loaded routes in Suspense */}
+      <Suspense fallback={
+        <div className="d-flex justify-content-center align-items-center" style={{height: "100vh"}}>
+          <Spinner animation="border" variant="primary" />
+        </div>
+      }>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<Container fluid="lg" className="mt-4"><About /></Container>} />
+          <Route path="/contact" element={<Container fluid="lg" className="mt-4"><Contact /></Container>} />
+          <Route path="/terms-and-conditions" element={<Container fluid="lg" className="mt-4"><TermsAndConditions /></Container>} />
 
-        {/* Landlord/Admin routes */}
-        <Route path="/my-listings" element={<LandlordRoute><Container fluid="lg" className="mt-4"><MyListings /></Container></LandlordRoute>} />
-        <Route path="/my-listings/new" element={<LandlordRoute><Container fluid="lg" className="mt-4"><CreateListing /></Container></LandlordRoute>} />
-        <Route path="/my-listings/edit/:id" element={<LandlordRoute><Container fluid="lg" className="mt-4"><EditListing /></Container></LandlordRoute>} />
-        <Route path="/admin/partners" element={<AdminRoute><Container fluid="lg" className="mt-4"><AdminPartners /></Container></AdminRoute>} />
-         
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          {/* Lazy-loaded public routes */}
+          <Route path="/apartments" element={<Container fluid="lg" className="mt-4"><Apartments user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
+          <Route path="/apartment/:id" element={<Container fluid="lg" className="mt-4"><ApartmentDetail user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
+          <Route path="/roommates" element={<Container fluid="lg" className="mt-4"><RoommateFinder user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
+          <Route path="/roommate/:profileId" element={<Container fluid="lg" className="mt-4"><RoommateProfileDetail user={user} setShowLoginModal={setShowLoginModal} /></Container>} />
+          <Route path="/resources" element={<Container fluid="lg" className="mt-4"><Resources /></Container>} />
+          <Route path="/resources/partner/:partnerId" element={<Container fluid="lg" className="mt-4"><PartnerDetail /></Container>} />
+          <Route path="/reset-password/:token" element={<Container fluid="lg" className="mt-4"><ResetPassword /></Container>} />
+          <Route path="/forgot-password" element={<Container fluid="lg" className="mt-4"><ForgotPassword /></Container>} />
+          <Route path="/verification-pending" element={<Container fluid="lg" className="mt-4"><VerificationPending /></Container>} />
+
+          {/* Lazy-loaded protected routes */}
+          <Route path="/profile" element={ user ? ( <Container fluid="lg" className="mt-4"><Profile user={user} onUpdateUser={handleUpdateUser} /></Container> ) : <Navigate to="/" /> } />
+          <Route path="/my-preferences" element={ user ? ( <Container fluid="lg"className="mt-4"><MyPreferences /></Container> ) : <Navigate to="/" /> } />
+          <Route path="/my-roommate-profile" element={ user ? ( <Container fluid="lg" className="mt-4"><MyRoommateProfile user={user} /></Container> ) : <Navigate to="/" /> } />
+          <Route path="/messages/:userId" element={ user ? ( <Container fluid="lg" className="mt-4"><Messages socket={socket} user={user} onlineUsers={onlineUsers} onMessagesRead={fetchUnreadCount} /></Container> ) : <Navigate to="/" /> } />
+          <Route path="/messages/inbox" element={ user ? ( <Container fluid="lg" className="mt-4"><Messages socket={socket} user={user} onlineUsers={onlineUsers} onMessagesRead={fetchUnreadCount} /></Container> ) : <Navigate to="/" /> } />
+
+          {/* Landlord/Admin routes */}
+          <Route path="/my-listings" element={<LandlordRoute><Container fluid="lg" className="mt-4"><MyListings /></Container></LandlordRoute>} />
+          <Route path="/my-listings/new" element={<LandlordRoute><Container fluid="lg" className="mt-4"><CreateListing /></Container></LandlordRoute>} />
+          <Route path="/my-listings/edit/:id" element={<LandlordRoute><Container fluid="lg" className="mt-4"><EditListing /></Container></LandlordRoute>} />
+          <Route path="/admin/partners" element={<AdminRoute><Container fluid="lg" className="mt-4"><AdminPartners /></Container></AdminRoute>} />
+          
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 }

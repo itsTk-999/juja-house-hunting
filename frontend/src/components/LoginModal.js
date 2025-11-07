@@ -1,3 +1,4 @@
+import loginBgImage from '../assets/login-bg.jpg';
 import React, { useState, useEffect } from 'react';
 // --- 1. Import InputGroup ---
 import { Button, Form, Alert, Tabs, Tab, InputGroup } from 'react-bootstrap';
@@ -283,7 +284,7 @@ function LoginModal({ show, onHide, onLoginSuccess }) {
         {/* --- Right section for the image (unchanged) --- */}
         <div 
           className="panel-image-section" 
-          style={{ backgroundImage: `url(${loginBgImage})` }} 
+          style={{ backgroundImage: show? `url(${loginBgImage})` : 'none' }} 
         >
           <div className="panel-image-overlay">
             <h2>Find Your Next Home</h2>
