@@ -18,7 +18,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import TermsAndConditions from './pages/TermsAndConditions';
 
-// --- LAZY LOAD HEAVIER OR RARELY VISITED PAGES ---
+// --- LAZY LOAD HEAVIER PAGES ---
 const Apartments = React.lazy(() => import('./pages/Apartments'));
 const ApartmentDetail = React.lazy(() => import('./pages/ApartmentDetail'));
 const Profile = React.lazy(() => import('./pages/Profile'));
@@ -186,7 +186,6 @@ function App() {
         onLoginSuccess={handleLoginSuccess}
       />
 
-      {/* Wrap only lazy-loaded routes in Suspense */}
       <Suspense fallback={
         <div className="d-flex justify-content-center align-items-center" style={{height: "100vh"}}>
           <Spinner animation="border" variant="primary" />

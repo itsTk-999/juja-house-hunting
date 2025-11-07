@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Image, ButtonGroup } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { authFetch } from '../utils/authFetch';
@@ -7,12 +7,13 @@ import Conversation from '../components/Conversation';
 import ChatBubble from '../components/ChatBubble';
 import './Messages.css';
 
+// --- Helper to get pinned conversations from localStorage
 const getPinnedConvos = () => {
   try {
     const pinned = localStorage.getItem('pinnedConversations');
     return pinned ? new Set(JSON.parse(pinned)) : new Set();
   } catch (e) {
-    console.warn("Failed to parse pinnedConversations from localStorage", e);
+    console.warn("Failed to parse pinnedConversations", e);
     return new Set();
   }
 };
@@ -36,19 +37,28 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
   const myId = user.id || user._id;
   const otherUser = currentChat?.participants?.find(p => p._id !== myId);
 
+  // --- Debounced resize
   useEffect(() => {
-    const handleResize = () => setIsMobileView(window.innerWidth < 768);
+    let timeout;
+    const handleResize = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setIsMobileView(window.innerWidth < 768), 150);
+    };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
+  // --- Load pinned conversations and initial chat list
   useEffect(() => {
     const initialPinned = getPinnedConvos();
     setPinnedConvos(initialPinned);
     getConversations('inbox', initialPinned);
   }, [user.id]);
 
-  const getConversations = async (currentView, pinnedSetOverride) => {
+  const getConversations = useCallback(async (currentView, pinnedSetOverride) => {
     setLoadingChats(true);
     const viewToFetch = currentView || view;
     const endpoint = viewToFetch === 'inbox' ? '/api/messages/conversations' : '/api/messages/hidden';
@@ -57,20 +67,23 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
       if (!res.ok) throw new Error('Failed to fetch conversations');
       const data = await res.json();
       const pinnedSet = pinnedSetOverride || pinnedConvos || getPinnedConvos();
+
+      // --- Sort by pinned + updatedAt
       const sortedData = [...data].sort((a, b) => {
         const isAPinned = pinnedSet.has(a._id);
         const isBPinned = pinnedSet.has(b._id);
-        if (isAPinned && !isBPinned) return -1;
-        if (!isAPinned && isBPinned) return 1;
+        if (isAPinned !== isBPinned) return isAPinned ? -1 : 1;
         return new Date(b.updatedAt) - new Date(a.updatedAt);
       });
+
       setConversations(sortedData);
     } catch (err) {
       console.error(err);
     }
     setLoadingChats(false);
-  };
+  }, [view, pinnedConvos]);
 
+  // --- Load messages for current conversation
   useEffect(() => {
     const getMessages = async (otherId) => {
       if (!otherId || otherId === 'inbox') {
@@ -99,6 +112,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
     }
   }, [urlUserId, view]);
 
+  // --- Socket real-time updates
   useEffect(() => {
     if (!socket?.current) return;
     const handleGetMessage = (data) => {
@@ -114,8 +128,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
         updated.sort((a, b) => {
           const isAPinned = pinnedConvos.has(a._id);
           const isBPinned = pinnedConvos.has(b._id);
-          if (isAPinned && !isBPinned) return -1;
-          if (!isAPinned && isBPinned) return 1;
+          if (isAPinned !== isBPinned) return isAPinned ? -1 : 1;
           return new Date(b.updatedAt) - new Date(a.updatedAt);
         });
         return updated;
@@ -125,40 +138,55 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
     return () => socket.current.off("getMessage", handleGetMessage);
   }, [socket, currentChat, pinnedConvos]);
 
-  const handleSubmit = async (e) => {
+  // --- Scroll to latest message
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [currentChatMessages]);
+
+  // --- Send message handler
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (newMessage.trim() === "" || !currentChat) return;
+    if (!newMessage.trim() || !currentChat) return;
+
     const messagePayload = {
       senderId: myId,
       receiverId: otherUser._id,
       message: newMessage,
       conversationId: currentChat._id
     };
+
     if (socket?.current) socket.current.emit("sendMessage", messagePayload);
+
     const tempMessage = {
       _id: `temp-${Date.now()}`,
       sender: myId,
       message: newMessage,
       createdAt: new Date().toISOString(),
     };
+
     setCurrentChatMessages(prev => [...prev, tempMessage]);
     setNewMessage("");
+
     try {
       const res = await authFetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(messagePayload),
       });
+
       if (res.ok) {
         const savedMsg = await res.json();
-        setCurrentChatMessages(prev => prev.map(m => (m._id === tempMessage._id ? savedMsg : m)));
+        setCurrentChatMessages(prev => prev.map(m => m._id === tempMessage._id ? savedMsg : m));
         setConversations(prev => {
-          const updated = prev.map(c => c._id === savedMsg.conversationId ? { ...c, updatedAt: savedMsg.createdAt, lastMessage: savedMsg.message } : c);
+          const updated = prev.map(c =>
+            c._id === savedMsg.conversationId
+              ? { ...c, updatedAt: savedMsg.createdAt, lastMessage: savedMsg.message }
+              : c
+          );
           updated.sort((a, b) => {
             const isAPinned = pinnedConvos.has(a._id);
             const isBPinned = pinnedConvos.has(b._id);
-            if (isAPinned && !isBPinned) return -1;
-            if (!isAPinned && isBPinned) return 1;
+            if (isAPinned !== isBPinned) return isAPinned ? -1 : 1;
             return new Date(b.updatedAt) - new Date(a.updatedAt);
           });
           return updated;
@@ -167,13 +195,10 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
     } catch (err) {
       console.error("Error saving message:", err);
     }
-  };
+  }, [newMessage, currentChat, otherUser, socket, pinnedConvos]);
 
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [currentChatMessages]);
-
-  const handleConversationClick = async (convoOtherUser) => {
+  // --- Click conversation handler
+  const handleConversationClick = useCallback(async (convoOtherUser) => {
     setLoadingMessages(true);
     setCurrentChat(null);
     setCurrentChatMessages([]);
@@ -190,37 +215,34 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
       console.error(err);
     }
     setLoadingMessages(false);
-  };
+  }, [navigate, isMobileView]);
 
-  const markAsRead = async (conversationId) => {
+  // --- Mark as read
+  const markAsRead = useCallback(async (conversationId) => {
     try {
       const res = await authFetch(`/api/messages/read/${conversationId}`, { method: 'PATCH' });
       if (res.ok) {
         onMessagesRead();
-        setConversations(prevConvos => prevConvos.map(c => c._id === conversationId ? { ...c, unreadCount: 0 } : c));
+        setConversations(prev => prev.map(c => c._id === conversationId ? { ...c, unreadCount: 0 } : c));
       }
     } catch (err) {
       console.error("Failed to mark as read", err);
     }
-  };
+  }, [onMessagesRead]);
 
+  // --- Pin/unpin conversation
   const handlePinToggle = async (conversationId) => {
     const newPinned = new Set(pinnedConvos);
     if (newPinned.has(conversationId)) newPinned.delete(conversationId);
     else newPinned.add(conversationId);
     setPinnedConvos(newPinned);
-    try {
-      localStorage.setItem('pinnedConversations', JSON.stringify(Array.from(newPinned)));
-    } catch (e) {
-      console.warn("Failed to persist pinnedConversations", e);
-    }
+    try { localStorage.setItem('pinnedConversations', JSON.stringify(Array.from(newPinned))); } catch {}
     setConversations(prev => {
       const copy = [...prev];
       copy.sort((a, b) => {
         const isAPinned = newPinned.has(a._id);
         const isBPinned = newPinned.has(b._id);
-        if (isAPinned && !isBPinned) return -1;
-        if (!isAPinned && isBPinned) return 1;
+        if (isAPinned !== isBPinned) return isAPinned ? -1 : 1;
         return new Date(b.updatedAt) - new Date(a.updatedAt);
       });
       return copy;
@@ -234,6 +256,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
     } catch {}
   };
 
+  // --- Change view (Inbox / Archived)
   const changeView = (newView) => {
     setView(newView);
     getConversations(newView, pinnedConvos);
@@ -242,6 +265,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
     if (isMobileView) setShowChatList(true);
   };
 
+  // --- Archive / Restore / Permanent Delete
   const handleArchive = async (id) => {
     if (!window.confirm("Are you sure you want to archive this conversation?")) return;
     try {
@@ -251,7 +275,6 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
       if (currentChat && currentChat._id === id) setCurrentChat(null);
     } catch (err) { alert(err.message); }
   };
-
   const handleRestore = async (id) => {
     if (!window.confirm("Move this conversation back to your inbox?")) return;
     try {
@@ -261,7 +284,6 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
       if (currentChat && currentChat._id === id) setCurrentChat(null);
     } catch (err) { alert(err.message); }
   };
-
   const handlePermanentDelete = async (id) => {
     if (!window.confirm("DANGER: Permanently delete this conversation from your view?")) return;
     try {
@@ -277,13 +299,10 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
   return (
     <Container fluid className={`chat-container ${isMobileView ? 'mobile-view' : ''}`} data-aos="fade-in">
       <Row className="h-100">
-
         {/* Chat List Column */}
         {(!isMobileView || showChatList) && (
           <Col md={3} className={`chat-menu-wrapper ${isMobileView ? 'mobile-list' : ''}`}>
-            <div className="chat-menu-header">
-              {view === 'inbox' ? 'Conversations' : 'Archived'}
-            </div>
+            <div className="chat-menu-header">{view === 'inbox' ? 'Conversations' : 'Archived'}</div>
             <ButtonGroup className="p-2">
               <Button variant={view === 'inbox' ? 'primary' : 'outline-secondary'} onClick={() => changeView('inbox')}>
                 <FaInbox className="me-2" /> Inbox
@@ -318,9 +337,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
                 })
               )}
               {!loadingChats && conversations.length === 0 && (
-                <p className="text-center text-muted p-3">
-                  {view === 'inbox' ? "No active conversations." : "No archived conversations."}
-                </p>
+                <p className="text-center text-muted p-3">{view === 'inbox' ? "No active conversations." : "No archived conversations."}</p>
               )}
             </div>
           </Col>
@@ -374,9 +391,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                   />
-                  <Button variant="success" type="submit" className="ms-2">
-                    Send
-                  </Button>
+                  <Button variant="success" type="submit" className="ms-2">Send</Button>
                 </Form>
               </>
             ) : (
@@ -389,7 +404,7 @@ function Messages({ socket, user, onlineUsers, onMessagesRead }) {
           </Col>
         )}
 
-        {/* Online Users (only desktop) */}
+        {/* Online Users (Desktop only) */}
         {!isMobileView && (
           <Col md={3} className="chat-online-wrapper">
             <div className="chat-online-header">Online Users</div>

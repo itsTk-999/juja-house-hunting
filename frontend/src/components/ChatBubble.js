@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import './ChatBubble.css';
 
 function ChatBubble({ message, isOwnMessage }) {
-  
-  // Format the timestamp
-  const messageTime = new Date(message.createdAt).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true
-  });
+  // Memoize formatted time to avoid recalculating on each render
+  const messageTime = useMemo(() => {
+    if (!message.createdAt) return '';
+    return new Date(message.createdAt).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+  }, [message.createdAt]);
 
   return (
     <div className={`message-wrapper ${isOwnMessage ? 'own' : 'other'}`}>
@@ -20,4 +22,5 @@ function ChatBubble({ message, isOwnMessage }) {
   );
 }
 
-export default ChatBubble;
+// Memoize to prevent unnecessary re-renders in long message lists
+export default memo(ChatBubble);

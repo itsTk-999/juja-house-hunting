@@ -5,7 +5,7 @@ import { Button, Form, Alert, Tabs, Tab, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './LoginModal.css'; 
 // --- 2. Import FaEye and FaEyeSlash ---
-import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa'; 
+import { FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 function LoginModal({ show, onHide, onLoginSuccess }) {
@@ -20,7 +20,7 @@ function LoginModal({ show, onHide, onLoginSuccess }) {
     role: 'tenant'
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  
+
   // --- 3. Add state for password visibility ---
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -284,7 +284,7 @@ function LoginModal({ show, onHide, onLoginSuccess }) {
         {/* --- Right section for the image (unchanged) --- */}
         <div 
           className="panel-image-section" 
-          style={{ backgroundImage: show? `url(${loginBgImage})` : 'none' }} 
+          style={{ backgroundImage: show ? `url(${loginBgImage})` : 'none' }} 
         >
           <div className="panel-image-overlay">
             <h2>Find Your Next Home</h2>
