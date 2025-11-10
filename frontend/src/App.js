@@ -50,6 +50,7 @@ function App() {
   const [unreadCount, setUnreadCount] = useState(0);
   
   const navigate = useNavigate();
+  
 
   const fetchUnreadCount = async () => {
     if (!localStorage.getItem('token')) return; 
@@ -228,6 +229,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>
+      {process.env.NODE_ENV === "production" && <SpeedInsights />}
     </div>
   );
 }
