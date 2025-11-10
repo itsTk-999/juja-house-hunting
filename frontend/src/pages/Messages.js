@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
+import React, { useState, useEffect, useRef, useCallback} from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Image, ButtonGroup } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { authFetch } from '../utils/authFetch';

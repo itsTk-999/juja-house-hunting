@@ -242,34 +242,8 @@ function Apartments({ user, setShowLoginModal }) {
       setError(err.message);
     }
   };
-// --- 4. RE-ADD THE ADMIN DELETE FUNCTION ---
-  const handleDeleteListing = async (propertyId) => {
-    if (!window.confirm("Admin: Are you sure you want to permanently delete this listing? This action cannot be undone.")) {
-      return;
-    }
-    
-    setError(''); // Clear previous errors
-    try {
-      const response = await authFetch(`/api/apartments/${propertyId}`, {
-        method: 'DELETE',
-      });
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to delete listing');
-      }
-      
-      // Success: Remove from state to update the UI instantly
-      setAllApartments(prev => prev.filter(apt => apt._id !== propertyId));
-      setFilteredApartments(prev => prev.filter(apt => apt._id !== propertyId));
-      
-    } catch (err) {
-      console.error("Delete error:", err);
-      setError(err.message); // Show the error in the alert
-    }
-  };
-  // --- END RE-ADD ---
 
+  
   return (
     <> 
       {/* --- Header --- */}
