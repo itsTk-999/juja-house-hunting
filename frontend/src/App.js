@@ -11,6 +11,9 @@ import { Container, Spinner } from 'react-bootstrap';
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { SpeedInsights } from "@vercel/speed-insights/react";
+SpeedInsights();
+
 
 // --- STATIC PAGES (frequent/lightweight) ---
 import Home from './pages/Home';
